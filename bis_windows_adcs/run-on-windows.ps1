@@ -256,7 +256,7 @@ function Install-ADCSRole {
 function Create-SubCARequest {
     Write-StepLog -Message "Creation ou verification de la CSR du sous-CA."
 
-    $existing = Get-ExistingCAConfigNames
+    $existing = @(Get-ExistingCAConfigNames)
     if (($existing.Count -gt 0) -and (-not (Test-Path (Get-CARegistryPath)))) {
         Write-StepLog -Message "Une autre configuration ADCS existe deja: $($existing -join ', ')." -Level "WARN"
         Write-StepLog -Message "Pour une VM de TP, relancez: .\run-on-windows.ps1 -ResetADCS" -Level "WARN"
@@ -515,7 +515,7 @@ function Verify-WebCertificate {
 
 function Export-Evidence {
     $reportPath = Join-Path $WorkDir "RAPPORT-WINDOWS-ADCS.md"
-    $caNames = Get-ExistingCAConfigNames
+    $caNames = @(Get-ExistingCAConfigNames)
     $files = @(
         $RootCACertPath,
         $SubCACertSignedPath,
