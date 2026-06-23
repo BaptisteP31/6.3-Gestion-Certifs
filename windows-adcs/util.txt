@@ -1,12 +1,53 @@
-1. Dans PowerShell admin, lance ça
-Stop-Service CertSvc -Force -ErrorAction SilentlyContinueImport-Module ADCSDeployment -ErrorAction SilentlyContinueUninstall-AdcsCertificationAuthority -Force -ErrorAction SilentlyContinueRemove-WindowsFeature ADCS-Cert-Authority -IncludeManagementToolsRemove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinueRemove-Item "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc\Configuration" -Recurse -Force -ErrorAction SilentlyContinueRemove-Item "C:\Windows\System32\CertLog" -Recurse -Force -ErrorAction SilentlyContinueRemove-Item "C:\Windows\System32\CertSrv\CertEnroll" -Recurse -Force -ErrorAction SilentlyContinueRestart-Computer
-Oui, c’est un peu bourrin, mais sur une VM dédiée au TP, c’est acceptable.
-2. Après redémarrage
+Ok, donc **tu as bien suivi**, mais Windows garde encore une config ADCS quelque part. Supprimer `C:\TP-Crypto-ADCS` ne suffit pas, et même `Remove-WindowsFeature` peut laisser des restes de configuration CertSvc.
+
+Là, en VM de TP, je ferais le nettoyage complet.
+
+## 1. Dans PowerShell admin, lance ça
+
+```powershell
+Stop-Service CertSvc -Force -ErrorAction SilentlyContinue
+
+Import-Module ADCSDeployment -ErrorAction SilentlyContinue
+Uninstall-AdcsCertificationAuthority -Force -ErrorAction SilentlyContinue
+
+Remove-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
+
+Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
+
+Remove-Item "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc\Configuration" -Recurse -Force -ErrorAction SilentlyContinue
+
+Remove-Item "C:\Windows\System32\CertLog" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item "C:\Windows\System32\CertSrv\CertEnroll" -Recurse -Force -ErrorAction SilentlyContinue
+
+Restart-Computer
+```
+
+Oui, c’est un peu bourrin, mais sur une **VM dédiée au TP**, c’est acceptable.
+
+## 2. Après redémarrage
+
 Relance PowerShell en admin, puis :
-cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcsSet-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force.\run-on-windows.ps1
+
+```powershell
+cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+.\run-on-windows.ps1
+```
+
 Le script réinstallera lui-même le rôle ADCS.
-3. Si ça plante encore
-À ce stade, ne perds pas 1h : recrée une VM propre ou reviens à un snapshot avant ADCS. Windows ADCS est chiant : une CA partiellement configurée laisse parfois des traces qui bloquent les réinstallations.
+
+## 3. Si ça plante encore
+
+À ce stade, ne perds pas 1h : **recrée une VM propre** ou reviens à un snapshot avant ADCS. Windows ADCS est chiant : une CA partiellement configurée laisse parfois des traces qui bloquent les réinstallations.
+
 Avant de recréer la VM, tu peux quand même m’envoyer le résultat de :
-Get-WindowsFeature ADCS-Cert-AuthorityGet-Service CertSvc -ErrorAction SilentlyContinueGet-ChildItem "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc" -Recurse -ErrorAction SilentlyContinue | Select-Object Name
-Mais franchement, si c’est une VM neuve, le plus rapide est souvent : reset VM propre → relancer script une seule fois.
+
+```powershell
+Get-WindowsFeature ADCS-Cert-Authority
+Get-Service CertSvc -ErrorAction SilentlyContinue
+Get-ChildItem "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc" -Recurse -ErrorAction SilentlyContinue | Select-Object Name
+```
+
+Mais franchement, si c’est une VM neuve, le plus rapide est souvent : **reset VM propre → relancer script une seule fois**.
