@@ -1,0 +1,55 @@
+OCSP Request Data:
+    Version: 1 (0x0)
+    Requestor List:
+        Certificate ID:
+          Hash Algorithm: sha1
+          Issuer Name Hash: B0FC97E5BC9A12DCC02BC4BAEBD89777BE64C5F6
+          Issuer Key Hash: 79BA9477A00D19DD34E639A4FC4CA5D25A6DF58C
+          Serial Number: 1811B09C4BB9E179133BB9D9A9B140C5
+OCSP Response Data:
+    OCSP Response Status: successful (0x0)
+    Response Type: Basic OCSP Response
+    Version: 1 (0x0)
+    Responder Id: 79BA9477A00D19DD34E639A4FC4CA5D25A6DF58C
+    Produced At: Jun 22 16:44:10 2026 GMT
+    Responses:
+    Certificate ID:
+      Hash Algorithm: sha1
+      Issuer Name Hash: B0FC97E5BC9A12DCC02BC4BAEBD89777BE64C5F6
+      Issuer Key Hash: 79BA9477A00D19DD34E639A4FC4CA5D25A6DF58C
+      Serial Number: 1811B09C4BB9E179133BB9D9A9B140C5
+    Cert Status: revoked
+    Revocation Time: Jun  9 14:37:38 2026 GMT
+    Revocation Reason: unspecified (0x0)
+    This Update: Jun 22 16:44:10 2026 GMT
+    Next Update: Jun 29 16:44:09 2026 GMT
+
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        1a:b7:2d:67:87:25:49:05:85:a2:99:3c:b5:76:47:5c:df:2a:
+        14:eb:0c:09:66:09:9d:5a:8c:b9:f3:44:24:50:2c:8b:21:d7:
+        ef:a6:08:35:31:51:9d:6e:be:d2:10:dd:8a:c2:78:d4:c0:73:
+        25:b3:26:7d:45:c9:d8:79:2f:dc:a5:f6:da:26:86:fb:f6:3e:
+        10:60:98:b1:4e:8c:96:0c:8d:16:88:9b:a7:8d:58:d9:7e:8c:
+        eb:46:be:dd:1a:17:4d:a7:90:65:d9:7a:86:20:78:49:d4:ba:
+        44:35:78:7f:e3:7c:19:1c:b1:55:7d:bf:f6:4b:dc:d0:0e:02:
+        3d:0c:54:94:05:29:68:c6:af:ea:49:6a:b2:8f:12:dd:9a:79:
+        c6:4d:30:50:02:45:1a:0b:d0:b9:57:95:5b:57:b5:0d:e5:06:
+        f3:1e:d9:2a:87:33:b9:79:85:4a:0e:3a:24:2e:f4:b9:8e:8d:
+        60:58:79:c9:6d:4a:19:c5:03:43:1b:fd:bd:d2:a5:cd:cb:b6:
+        f6:5c:59:2a:9b:44:49:e1:de:4b:12:99:eb:ee:bf:b4:31:eb:
+        ba:e4:88:8f:03:33:c9:da:ce:03:d1:e8:91:22:e8:6d:dc:b6:
+        0a:a5:a8:83:3d:a1:bd:c3:a4:e1:9d:1f:58:30:60:cf:17:41:
+        44:a3:5e:5d:49:62:fc:f3:0f:c9:71:91:a5:d4:4e:f7:c8:cc:
+        e9:9f:9f:94:aa:98:30:06:c7:0f:6c:75:47:e8:ff:51:fc:9c:
+        03:bb:f0:e7:99:f4:12:a7:e9:64:f9:1b:c3:93:db:18:ea:5e:
+        10:b3:d7:28:27:f2:e4:00:0e:5a:5a:8d:98:84:4c:46:c4:f2:
+        2c:7d:7f:2a:bf:28:b1:81:a3:bc:6e:f7:ab:f6:26:b4:c5:a0:
+        43:73:82:4a:27:8f:7c:50:54:e1:d4:1b:f9:96:5b:e4:90:a0:
+        9a:65:f3:0d:83:0b:70:78:84:f0:c0:9a:e7:83:ea:54:29:1c:
+        d0:a0:b9:06:f1:8c
+revoked-rsa-dv.ssl.com.pem: revoked
+	This Update: Jun 22 16:44:10 2026 GMT
+	Next Update: Jun 29 16:44:09 2026 GMT
+	Reason: unspecified
+	Revocation Time: Jun  9 14:37:38 2026 GMT

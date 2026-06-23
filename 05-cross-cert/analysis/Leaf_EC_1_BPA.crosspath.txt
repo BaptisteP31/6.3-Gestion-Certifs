@@ -1,0 +1,44 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 4098 (0x1002)
+        Signature Algorithm: ecdsa-with-SHA256
+        Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_EC_CA_1_BPA
+        Validity
+            Not Before: Jun 23 07:13:23 2026 GMT
+            Not After : Jun 23 07:13:23 2027 GMT
+        Subject: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Leaf_EC_1_BPA
+        Subject Public Key Info:
+            Public Key Algorithm: id-ecPublicKey
+                Public-Key: (384 bit)
+                pub:
+                    04:16:0a:f2:d9:1d:f2:6f:8c:1c:5c:79:da:ac:f4:
+                    be:68:1e:a6:34:83:58:ff:36:21:c6:7d:f9:61:12:
+                    96:14:ba:53:e5:7a:83:21:d3:c2:2d:05:f5:cd:ed:
+                    98:8f:f1:ce:0c:33:6f:04:ad:0f:cd:59:a6:b9:8f:
+                    3d:28:bb:4a:ac:22:75:99:ba:2b:65:fd:7b:aa:59:
+                    83:35:84:39:49:a5:3a:dd:05:77:01:21:5f:c9:d5:
+                    95:f9:29:5f:f7:2a:14
+                ASN1 OID: secp384r1
+                NIST CURVE: P-384
+        X509v3 extensions:
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Agreement
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Subject Key Identifier: 
+                0F:26:8B:03:BC:3B:B2:1A:99:59:2E:EB:03:20:6B:10:96:31:21:BB
+            X509v3 Authority Key Identifier: 
+                6B:85:7D:7A:E8:56:08:BF:A9:B1:BF:CE:D7:48:60:E7:81:35:90:E8
+            X509v3 Subject Alternative Name: 
+                DNS:leaf-ec-1.bpa.local, DNS:leaf-ec-1
+    Signature Algorithm: ecdsa-with-SHA256
+    Signature Value:
+        30:65:02:31:00:9f:5a:c2:65:90:d3:c8:6a:aa:68:bc:b9:7c:
+        c3:8a:cb:95:78:77:78:0f:c5:3c:79:3a:c5:ca:78:d6:f6:df:
+        af:e0:c2:e0:f0:2e:1d:b4:b4:44:8e:4d:77:84:04:97:40:02:
+        30:15:97:de:38:41:85:d4:e4:21:7e:fd:2a:82:37:f2:9c:de:
+        d3:b2:60:2c:3b:22:55:42:99:75:67:10:d5:d9:d9:1a:9c:90:
+        e0:49:3d:01:8b:12:e2:08:6e:fc:05:2a:74

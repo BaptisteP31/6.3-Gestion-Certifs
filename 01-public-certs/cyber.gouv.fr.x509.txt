@@ -1,0 +1,145 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            05:7e:1f:dd:c4:8e:7a:07:80:64:3a:be:eb:cc:52:a5
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=FR, O=Gandi SAS, CN=GandiCert
+        Validity
+            Not Before: Feb 16 00:00:00 2026 GMT
+            Not After : Feb 16 23:59:59 2027 GMT
+        Subject: CN=cyber.gouv.fr
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (4096 bit)
+                Modulus:
+                    00:b0:97:85:0b:fe:13:ea:63:5f:b1:da:4b:a1:3e:
+                    b8:6b:38:29:28:c3:4e:b2:4f:f8:d8:ae:ea:a1:dc:
+                    2c:f9:ab:33:a4:bb:ac:7e:4f:50:d1:95:85:7f:b1:
+                    f8:bb:9f:61:15:b8:4a:37:4e:d6:c2:25:96:22:b3:
+                    02:5b:c5:5e:26:0f:b5:73:a0:2d:3a:db:89:50:c8:
+                    6d:80:6f:1d:aa:c7:0a:67:fe:25:98:75:3a:b0:a2:
+                    db:e9:00:9f:5a:4f:d6:de:c2:88:eb:cd:63:99:54:
+                    2c:46:01:82:2d:ff:a0:cc:35:bf:28:a1:b4:73:15:
+                    fb:f4:66:d8:cb:1a:a7:55:70:fe:9e:de:06:52:6e:
+                    b8:8c:40:0a:d0:aa:7d:09:44:f3:21:93:e2:73:08:
+                    fd:bf:ce:f2:bf:9f:a4:0d:3f:2f:9a:7e:2b:1d:f0:
+                    53:ed:ac:34:d2:7f:09:91:7a:ab:7f:57:2a:34:69:
+                    48:a4:d2:4f:d8:9c:ba:b6:f1:cf:0c:a6:ba:2e:1b:
+                    f7:b9:02:ce:ca:b6:a5:4d:d6:ec:95:19:53:39:d8:
+                    90:f5:bf:37:c9:ad:4d:21:fa:61:e4:14:3c:f3:10:
+                    62:af:7c:91:74:63:23:b9:fa:c3:03:0b:f6:9c:d5:
+                    2d:67:da:f2:c9:24:16:90:a8:e5:99:55:9c:2d:8d:
+                    0f:cf:e2:28:d5:47:0f:9b:ee:4e:52:be:9c:aa:be:
+                    7f:d8:b9:82:d3:1f:43:4f:95:79:26:86:f4:57:ec:
+                    76:8c:57:ca:ae:b9:e0:19:c2:87:29:ed:49:0f:9f:
+                    0e:2a:94:59:ad:61:77:45:0f:c3:72:05:f9:c6:52:
+                    77:2b:b9:9d:73:a1:42:df:fe:8f:6d:a7:55:2c:64:
+                    ab:0b:d5:93:ae:76:d4:63:84:bc:b0:c8:67:6e:82:
+                    cf:47:c8:31:32:af:76:ee:26:a9:94:b4:19:3f:07:
+                    29:0f:92:9a:4d:e6:37:81:1a:fe:c1:3f:57:d8:e5:
+                    e6:d8:e2:1e:1e:65:41:df:f6:85:f7:5b:09:10:cb:
+                    d0:54:bb:a3:c4:62:af:7b:49:8b:f9:ad:0c:7a:ae:
+                    ec:f4:88:fe:73:d8:f6:6f:34:14:33:d9:9c:fb:51:
+                    e6:64:a3:45:68:0e:f5:17:a1:3e:ea:eb:a0:4a:5a:
+                    6f:88:5d:2b:4a:14:81:fe:f2:12:40:db:91:99:94:
+                    e5:3b:99:29:2c:49:7b:ff:7b:d4:0a:03:7b:66:c0:
+                    d5:5a:c7:90:45:0c:60:88:0a:54:d1:70:68:ca:5b:
+                    6a:35:ed:df:e4:4b:b8:2b:69:f2:1f:28:c1:99:31:
+                    8e:80:5d:87:a1:db:dc:7b:3a:d3:fe:c3:3f:32:e5:
+                    5d:ec:c7
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Authority Key Identifier: 
+                BA:BB:46:88:45:EC:DD:5A:2B:18:C5:D1:4E:EC:E3:3C:06:52:53:AC
+            X509v3 Subject Key Identifier: 
+                AB:F1:09:15:ED:2E:C6:21:82:36:05:F1:72:7F:68:17:3D:51:4B:FD
+            X509v3 Subject Alternative Name: 
+                DNS:cyber.gouv.fr, DNS:ssi.gouv.fr, DNS:www.ssi.gouv.fr, DNS:www.cyber.gouv.fr
+            X509v3 Certificate Policies: 
+                Policy: 2.23.140.1.2.1
+                  CPS: http://www.digicert.com/CPS
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl3.digicert.com/GandiCert.crl
+
+                Full Name:
+                  URI:http://crl4.digicert.com/GandiCert.crl
+
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.digicert.com
+                CA Issuers - URI:http://cacerts.digicert.com/GandiCert.crt
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            CT Precertificate SCTs: 
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 4C:63:DC:98:E5:9C:1D:AB:88:F6:1E:8A:3D:DE:AE:8F:
+                                AB:44:A3:37:7B:5F:9B:94:C3:FB:A1:9C:FC:C1:BE:26
+                    Timestamp : Feb 16 13:23:58.768 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:44:02:20:17:EC:EA:71:2C:2F:38:7E:60:33:DC:29:
+                                B4:62:16:50:9D:42:AF:0E:FD:0C:2F:18:59:61:A3:A1:
+                                4C:12:16:2A:02:20:7D:08:A2:CA:2D:70:46:2E:67:AF:
+                                30:77:F5:78:B3:95:4E:A2:0C:1A:FD:6E:83:34:19:F7:
+                                BB:65:38:D8:35:F0
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 1C:9F:68:2C:E9:FA:F0:45:69:50:F8:1B:96:8A:87:DD:
+                                DB:32:10:D8:4C:E6:C8:B2:E3:82:52:4A:C4:CF:59:9F
+                    Timestamp : Feb 16 13:23:58.823 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:44:02:20:5F:A7:39:13:C6:9F:DF:B3:0F:98:7D:33:
+                                33:C9:77:B9:87:83:52:AD:ED:14:69:A2:FA:67:CA:EC:
+                                91:D6:F9:22:02:20:4E:44:0D:91:78:43:E2:4A:5F:8D:
+                                D2:0B:D9:91:59:30:63:22:1C:5D:A5:04:26:03:2B:45:
+                                E0:60:02:2C:20:3F
+                Signed Certificate Timestamp:
+                    Version   : v1 (0x0)
+                    Log ID    : 60:4C:9A:AF:7A:7F:77:5F:01:D4:06:FC:92:0D:C8:99:
+                                EB:0B:1C:7D:F8:C9:52:1B:FA:FA:17:77:3B:97:8B:C9
+                    Timestamp : Feb 16 13:23:58.966 2026 GMT
+                    Extensions: none
+                    Signature : ecdsa-with-SHA256
+                                30:44:02:20:49:60:E1:F8:D8:A9:9B:33:C0:EA:7B:8B:
+                                7C:B5:AD:AE:AE:9A:54:66:FF:AB:90:65:B5:D7:9A:0F:
+                                B9:41:FB:92:02:20:01:34:D4:FE:8D:A9:5D:BB:B7:6B:
+                                88:2F:44:6B:BA:65:3F:86:E6:D9:88:A7:74:F9:6D:D4:
+                                C3:C7:D7:40:4A:1B
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        31:42:ca:65:10:d8:b6:3b:3a:23:61:23:22:b7:57:6b:83:fa:
+        3c:09:ef:35:06:3c:b2:39:15:a8:84:39:44:50:aa:fa:22:19:
+        a2:43:10:ca:3d:c0:bd:90:75:a2:ae:04:14:db:f5:b0:ed:91:
+        3b:5c:7f:ee:68:b7:90:c4:ea:8a:3c:b1:25:03:05:87:68:fd:
+        42:1e:d0:e3:3a:f5:a7:b7:37:3e:d6:bd:29:41:29:58:d6:49:
+        f6:ba:be:0a:3a:a7:b0:37:ec:95:8d:89:55:5f:e9:df:a3:2f:
+        90:2b:d5:54:17:55:de:36:4b:57:41:93:f5:e3:54:fc:58:cf:
+        ec:29:39:7b:ff:80:23:9e:43:4e:77:1f:36:4d:bc:f6:52:c6:
+        a5:ee:1e:eb:21:1a:2b:26:52:7c:56:b1:f4:b3:4c:9d:1b:12:
+        eb:41:0e:0b:e5:63:08:d0:fb:09:19:3c:ca:38:8b:5b:bf:70:
+        1d:e3:5f:c0:3e:53:c0:69:20:e7:13:57:0f:40:fe:e1:a0:00:
+        ce:2f:7b:50:08:99:aa:3b:76:59:8f:12:c2:dd:24:f1:46:90:
+        51:e9:ec:84:93:57:c5:79:9c:69:68:0d:ef:33:bd:20:65:0e:
+        21:96:06:75:b5:76:d5:f3:09:8f:51:ff:5b:6d:0b:cc:38:f4:
+        31:7c:84:cd:8e:96:41:e6:13:48:12:f1:6d:4d:ce:fe:19:6e:
+        de:14:86:dd:54:b7:f5:02:c2:a9:16:ea:15:46:77:45:22:87:
+        30:e1:c3:25:ae:ef:33:b1:7d:4a:d0:e3:b4:7c:b8:56:a6:0f:
+        e4:03:aa:e3:70:c8:86:41:54:58:98:a1:d1:72:14:48:9e:a7:
+        dc:55:e8:cf:09:16:66:6f:34:8e:52:58:f9:44:ed:aa:a4:d5:
+        81:2a:a8:0d:48:73:92:00:83:d2:2b:2d:6d:6f:1f:0a:f7:54:
+        12:1e:43:c0:09:06:58:14:e5:b6:16:3c:ab:23:bb:21:cc:7d:
+        52:5a:e9:f3:39:1d:1e:0f:b1:0e:d5:80:6b:c8:40:59:ae:69:
+        b8:17:a8:ad:76:8a:8b:a9:2f:c5:88:43:e2:25:17:87:fa:c0:
+        83:07:44:0b:ca:d4:52:7a:1c:09:7f:ce:ea:d9:20:80:29:7c:
+        e9:56:2b:32:62:36:44:04:ed:1b:95:a5:db:0d:70:00:38:a9:
+        eb:3c:56:03:0e:ab:02:c3:4d:f3:35:ac:95:7c:cf:8d:5f:7d:
+        fc:63:a5:5c:82:83:c7:8c:89:53:be:f9:b5:ff:99:d5:91:3d:
+        9d:6e:53:32:72:38:ee:7a:34:01:91:fd:a6:ae:6f:1c:9c:72:
+        61:35:f0:af:a2:3c:d1:c9

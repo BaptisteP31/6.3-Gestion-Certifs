@@ -1,0 +1,58 @@
+# OpenSSL configuration for the EC root CA.
+# This file is used both for the self-signed root certificate
+# and as the CA database configuration when signing the EC intermediate.
+
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = ./EC_Root_CA_BPA
+certs             = $dir/certs
+new_certs_dir     = $dir/newcerts
+database          = $dir/db/index.txt
+serial            = $dir/db/serial
+crlnumber         = $dir/db/crlnumber
+crl               = $dir/db/crl.pem
+certificate       = $dir/certs/EC_Root_CA_BPA.crt
+private_key       = $dir/private/EC_Root_CA_BPA.key.pem
+default_md        = sha256
+default_days      = 5475
+policy            = policy_loose
+email_in_dn       = no
+unique_subject    = no
+copy_extensions   = none
+preserve          = no
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName   = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+default_bits        = 384
+default_md          = sha256
+prompt              = no
+distinguished_name   = dn
+x509_extensions     = v3_root_ca
+
+[ dn ]
+C  = FR
+O  = TP Crypto Agents
+OU = PKI OpenSSL
+CN = EC_Root_CA_BPA
+
+[ v3_root_ca ]
+basicConstraints      = critical, CA:TRUE
+keyUsage              = critical, keyCertSign, cRLSign
+subjectKeyIdentifier  = hash
+authorityKeyIdentifier = keyid:always,issuer
+
+[ v3_sub_ca ]
+basicConstraints      = critical, CA:TRUE, pathlen:0
+keyUsage              = critical, keyCertSign, cRLSign
+subjectKeyIdentifier  = hash
+authorityKeyIdentifier = keyid:always,issuer

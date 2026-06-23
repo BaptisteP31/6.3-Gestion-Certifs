@@ -1,0 +1,84 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 4097 (0x1001)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_BPA
+        Validity
+            Not Before: Jun 23 07:18:21 2026 GMT
+            Not After : Jun 23 07:18:21 2027 GMT
+        Subject: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_BPA-leaf-ocsp
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (3072 bit)
+                Modulus:
+                    00:be:01:e3:17:bf:27:86:f6:cc:61:02:d3:58:6e:
+                    a6:25:36:9d:81:f5:7a:54:b1:46:28:60:3c:d3:fd:
+                    0f:e5:58:9a:9a:81:0d:c8:92:b1:10:91:b2:38:05:
+                    0a:17:9d:62:11:56:a7:99:9a:eb:c1:67:e7:23:fc:
+                    04:77:df:c3:dd:3b:cf:4c:30:fe:73:a4:32:46:22:
+                    df:76:b2:23:10:41:c8:fa:68:5c:47:70:0f:ef:3a:
+                    0d:af:7b:b9:23:e9:6f:ae:2c:55:84:1b:16:4d:91:
+                    fb:4e:5c:05:c7:90:95:97:59:60:2a:54:7a:34:cc:
+                    8c:7f:ff:82:bc:ba:1c:84:83:f1:f4:9d:6e:7a:c0:
+                    7f:dc:1c:92:e0:0c:30:09:45:29:8a:ff:a5:9c:55:
+                    7b:93:5c:4d:39:4d:1d:8d:bf:19:b3:56:65:26:1a:
+                    91:9b:d8:58:b8:b4:17:a9:d7:00:66:e9:57:5a:df:
+                    30:69:4b:3e:2c:c3:6f:cc:38:af:e8:5c:04:29:0e:
+                    77:a4:37:6f:7c:4f:f7:f5:72:bd:d8:ca:e3:b7:cd:
+                    e2:93:58:2e:64:96:68:97:b2:6f:ca:5c:5c:8f:62:
+                    e8:54:6a:29:a9:ee:d4:ba:44:1f:47:be:2d:28:d0:
+                    3e:73:b3:b2:1e:8e:28:d6:10:6c:0f:60:66:c5:05:
+                    74:8f:fd:8b:b5:1a:03:c8:f0:47:39:07:e9:95:ed:
+                    d0:0f:8d:bb:b6:ef:f4:3c:87:e3:91:03:bc:b0:94:
+                    57:78:4b:12:53:35:f8:cd:4c:f0:fb:90:c2:91:3d:
+                    61:ad:88:d1:e5:ed:de:25:7e:ef:0b:ae:d3:4c:cf:
+                    b7:d3:68:8c:a8:43:13:e6:47:26:e1:95:d1:ec:75:
+                    82:78:c0:ab:f4:e2:82:5d:e8:3a:86:cc:61:0d:b5:
+                    da:22:54:f4:78:ac:8c:11:34:0f:4c:c3:83:a4:c3:
+                    35:9a:77:55:87:2b:5f:68:ea:e4:4d:73:57:b7:d6:
+                    cc:20:33:ff:28:28:67:b0:0b:d9
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication, TLS Web Client Authentication
+            X509v3 Subject Key Identifier: 
+                F0:A9:45:22:8B:B0:87:CE:67:C4:E3:E9:FA:F8:15:A0:92:24:E9:57
+            X509v3 Authority Key Identifier: 
+                EB:50:95:92:A0:76:D6:C9:A8:47:D9:6D:CA:0B:3D:74:09:A4:32:5F
+            X509v3 Subject Alternative Name: 
+                DNS:leaf-rsa-ocsp.bpa.local, DNS:leaf-rsa-ocsp
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crl.localhost:2560/Sub_RSA_CA_1_BPA.crl
+
+            Authority Information Access: 
+                OCSP - URI:http://ocsp.localhost:2560
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        3d:cd:e4:94:5f:e5:15:ad:fd:1a:35:2d:4f:e6:c5:43:f0:d0:
+        19:5c:b1:d8:46:5b:1e:af:94:d4:05:58:f1:b0:39:66:5f:3b:
+        c1:ee:70:93:cf:93:cf:e4:a9:16:39:c8:31:42:49:7d:21:f1:
+        40:59:2c:0e:a5:b0:cf:bb:da:34:bc:6d:73:89:20:12:15:52:
+        25:b7:64:03:8d:7c:03:89:9c:0c:dd:ae:e0:4d:42:d5:62:7c:
+        e7:7a:9f:ba:98:ca:1d:67:5b:43:28:f0:3e:3f:78:01:59:00:
+        a9:e7:90:9e:4f:01:ca:50:94:f2:f8:0a:ad:af:cc:e3:01:1d:
+        36:54:14:f7:a1:26:88:dd:a4:cc:1b:7f:80:6c:50:3d:37:47:
+        64:92:74:90:f6:27:41:7a:67:41:cb:73:ba:74:a3:6a:ff:84:
+        f6:a4:0a:b9:f2:d3:65:b1:78:c5:e4:84:71:34:a4:f1:f3:63:
+        ec:83:5a:8f:66:71:11:75:82:76:b0:af:36:27:7f:fa:fe:8e:
+        e6:e4:af:06:c6:42:77:5d:23:14:c8:32:be:9d:e2:db:04:ba:
+        c6:2d:f8:9d:ab:5f:be:ed:22:7e:08:bd:14:08:41:fe:4f:e6:
+        68:30:e0:35:62:c0:3f:92:da:d2:08:27:4c:10:a6:2f:80:12:
+        11:53:bf:78:89:98:92:ff:5b:69:c9:d4:e4:be:92:e0:ac:43:
+        fc:ca:d2:b0:47:b5:8e:15:29:57:fa:2a:68:ea:c5:36:14:29:
+        38:b8:34:4a:ee:f4:05:ce:2f:40:d3:1c:89:97:23:87:09:3c:
+        6e:f8:ab:04:d7:f2:f9:7c:85:78:ea:8f:20:a8:da:fb:0b:29:
+        8d:ce:72:28:2e:2f:69:67:1d:83:69:ab:50:91:4a:ff:6e:e0:
+        c7:a8:aa:0c:f9:2c:eb:30:83:9b:ce:fa:8c:9b:a2:e3:3b:cf:
+        e8:8b:92:2f:6f:8c:5e:93:c0:6d:62:ec:26:a1:a9:10:07:b5:
+        24:47:85:3c:3a:6f

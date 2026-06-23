@@ -1,0 +1,78 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 4097 (0x1001)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_BPA
+        Validity
+            Not Before: Jun 23 07:13:29 2026 GMT
+            Not After : Jun 23 07:13:29 2027 GMT
+        Subject: C=FR, O=TP Crypto Agents, OU=SMIME, CN=SMIME Test User
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (3072 bit)
+                Modulus:
+                    00:e6:ab:f2:9d:67:78:59:7e:d7:ee:f3:fe:59:81:
+                    08:d4:f7:02:7a:04:d9:8f:74:3a:2e:0e:61:a2:7d:
+                    e8:63:fa:fd:61:0e:02:20:ba:9c:b1:fc:fd:c8:ce:
+                    da:34:ea:a5:a6:03:48:10:b9:48:a5:22:36:e2:4f:
+                    af:cf:03:f6:6f:1b:a5:a7:f7:d5:4a:8f:00:ea:8e:
+                    3e:4c:a2:2a:1e:ec:c8:2e:47:7e:20:00:dd:76:d4:
+                    39:6f:ae:cd:0b:c1:72:80:6f:e4:07:54:e4:fa:44:
+                    cb:12:4e:2d:d0:6e:fc:c5:33:6a:69:91:01:2c:37:
+                    70:6f:39:92:41:bb:f6:5a:6a:9d:37:aa:3d:9c:49:
+                    8a:a4:ec:2e:55:00:dc:8d:13:f7:87:a5:4d:dc:d7:
+                    d7:6d:c6:07:f2:d1:a1:c9:e3:6f:35:16:84:10:78:
+                    30:28:70:19:95:af:90:a7:9c:8a:04:54:ce:7b:7f:
+                    e1:ee:5b:0a:e5:f2:81:41:38:63:62:42:b2:1b:64:
+                    95:99:57:6e:41:78:34:93:07:fe:ca:79:3f:04:ba:
+                    7f:63:63:5e:bc:07:3f:95:bb:24:aa:17:b0:6e:b6:
+                    99:ae:b9:be:ad:c4:c4:d1:f4:93:40:e0:44:46:c2:
+                    72:9c:af:b5:36:8c:4a:c2:64:fe:1d:1e:20:b8:f6:
+                    91:0d:7c:6f:f5:38:0b:4a:f8:be:e5:d9:9b:c9:5c:
+                    97:0f:91:9d:9c:7c:50:7d:3b:e2:74:0e:f3:e8:cc:
+                    4b:cf:f8:4c:de:98:ad:a3:e8:0a:31:42:09:76:d5:
+                    c6:1a:55:48:55:1e:cf:a7:c5:6f:31:90:fe:67:a7:
+                    87:99:fd:f4:83:d0:7b:4b:a8:bb:51:f8:ca:15:76:
+                    02:25:92:60:d6:f4:9d:f5:91:19:03:cb:d7:31:06:
+                    45:2b:a2:f5:62:b9:8d:20:58:32:d3:11:32:d7:d0:
+                    bc:3d:d5:94:ab:e4:49:c0:72:b2:b5:c2:09:b7:a3:
+                    3c:71:e9:54:57:99:fe:e5:3e:f1
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: critical
+                CA:FALSE
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage: 
+                E-mail Protection
+            X509v3 Subject Key Identifier: 
+                F8:C7:5F:08:2C:FC:18:57:09:56:6B:F7:11:3E:0B:46:36:9B:13:AF
+            X509v3 Authority Key Identifier: 
+                EB:50:95:92:A0:76:D6:C9:A8:47:D9:6D:CA:0B:3D:74:09:A4:32:5F
+            X509v3 Subject Alternative Name: 
+                email:smime-user@bpa.local
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        b4:15:bf:0f:b0:1a:aa:1f:9f:d0:3c:f8:c6:95:e2:bd:d3:70:
+        17:dc:11:8b:a8:a8:af:9f:e2:70:2b:7b:30:ad:d4:c7:85:97:
+        ed:5a:1f:95:78:8a:8a:49:52:7e:57:2c:63:ae:4b:c7:92:78:
+        ce:ad:e0:65:16:bb:d7:40:71:5e:fa:4f:66:c0:17:5a:e5:bb:
+        9f:2b:44:b5:55:a2:53:61:84:1b:15:ed:e7:a1:68:ca:2a:f2:
+        f7:96:f4:aa:da:03:f5:02:e4:6f:3e:91:fb:98:b1:07:6a:89:
+        e3:a6:9e:3d:c0:e9:52:6e:e7:32:05:53:57:a9:4c:02:77:74:
+        4a:e2:1a:79:a7:18:91:5d:c4:32:65:bf:00:19:b2:2c:f9:5a:
+        e0:fa:b7:6a:2f:5d:29:ac:68:ff:8b:c0:0c:a4:6b:94:c6:e8:
+        4e:61:6e:69:02:d8:49:a2:d3:90:ae:23:42:2c:50:a9:b5:0b:
+        59:b2:14:e8:2f:bd:05:5b:58:d9:80:7b:6d:fd:de:b5:08:6f:
+        17:94:8b:7f:3b:01:fa:64:2a:52:67:7c:81:ca:56:8e:50:c7:
+        a2:37:77:09:dd:20:9d:70:48:fa:5a:f8:9e:10:65:26:a4:ef:
+        6f:f6:da:17:46:12:e3:64:e5:3d:11:bd:01:77:42:31:7d:03:
+        39:84:4c:96:a1:2d:0c:5d:ce:02:6e:f7:68:35:a1:f5:ef:be:
+        53:1c:bf:bd:3c:6a:73:2c:3f:9e:2a:a6:a5:e0:4b:34:87:db:
+        1e:dd:3e:ff:c2:57:55:3e:2a:bf:22:d1:40:cc:54:03:bf:cd:
+        bc:15:9c:19:93:f3:14:e6:21:86:5a:de:e0:82:8d:3c:db:71:
+        85:e0:33:8d:a8:47:93:52:6b:3c:36:ea:be:24:d7:1d:5a:49:
+        46:39:12:43:1d:0f:11:41:b7:bb:db:6a:8f:7e:99:eb:6a:d4:
+        42:bc:e9:7b:d5:53:c1:6b:44:03:e2:e9:4b:1f:96:a6:6d:be:
+        38:b2:70:74:e5:56

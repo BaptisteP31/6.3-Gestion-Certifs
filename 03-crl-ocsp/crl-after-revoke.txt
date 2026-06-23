@@ -1,0 +1,39 @@
+Certificate Revocation List (CRL):
+    Version 2 (0x1)
+    Signature Algorithm: sha256WithRSAEncryption
+    Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_BPA
+    Last Update: Jun 23 07:18:21 2026 GMT
+    Next Update: Jul 23 07:18:21 2026 GMT
+    CRL extensions:
+        X509v3 CRL Number: 
+            4096
+Revoked Certificates:
+    Serial Number: 1000
+        Revocation Date: Jun 23 07:18:21 2026 GMT
+        CRL entry extensions:
+            X509v3 CRL Reason Code: 
+                Key Compromise
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        a8:97:05:21:89:d8:ab:ab:c0:c9:39:92:68:8c:bc:4c:1d:9b:
+        17:03:9e:eb:40:89:8c:39:ed:01:af:d5:0d:c4:15:66:89:df:
+        72:2a:08:ca:e3:cb:6c:03:89:fc:8c:5c:78:3f:77:d6:c7:f1:
+        38:0d:3d:a6:46:4c:df:ec:b5:51:c7:85:3a:a8:6d:b3:a6:8e:
+        4b:fe:66:f6:e5:5b:5a:a6:bc:42:9b:ed:9d:47:2a:9c:fa:61:
+        48:7d:0a:b4:06:12:6a:de:d7:8a:a7:c1:f9:5c:a2:78:1e:f2:
+        6f:c7:0b:ad:9e:97:cc:56:1d:7a:fd:5b:53:7a:02:61:a1:01:
+        c6:ad:77:61:ab:de:82:4c:63:22:e9:d7:e4:e2:6b:70:47:bc:
+        1f:53:3b:a8:13:bb:78:0a:cb:fe:83:a2:aa:77:81:55:2c:de:
+        17:44:2a:b7:8c:d1:58:8c:a0:c1:c1:0c:83:ca:52:e8:84:56:
+        25:fe:1d:20:65:15:fa:6f:3e:b6:82:1d:bf:45:96:bb:a7:99:
+        ac:96:47:fb:ba:26:e7:7c:38:3e:74:b2:93:24:0e:96:4f:f2:
+        16:8c:83:ce:e8:85:75:5c:cb:d4:2a:91:97:6e:a8:90:a3:32:
+        ec:55:34:10:f3:f4:b9:5a:90:83:38:9e:f2:a7:64:97:f5:64:
+        8f:ba:22:cb:3b:05:1c:be:a4:4d:c7:f4:1b:b1:6f:c8:c5:74:
+        fc:b9:40:af:8e:21:2f:f1:08:6f:e7:38:14:a4:50:1d:b6:7a:
+        8b:41:9c:4c:4c:83:a6:25:fd:0d:4e:2b:c9:c0:62:cc:2d:9e:
+        29:97:84:f6:e0:14:aa:04:2e:00:32:6c:a0:dc:93:e5:5d:2f:
+        7e:3a:87:16:9b:16:1e:fb:6d:ef:d3:cb:2b:82:3f:a8:88:75:
+        37:8b:38:b0:25:23:8e:d6:20:d0:73:7e:96:28:cc:dd:85:92:
+        de:06:2f:62:49:f9:4f:b0:07:76:84:c5:0d:19:4e:bf:bf:7c:
+        91:90:58:b2:a9:33

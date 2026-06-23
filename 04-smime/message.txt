@@ -1,0 +1,6 @@
+Bonjour,
+
+Ceci est un message de test S/MIME.
+Il servira pour la signature, le chiffrement, puis la vérification de bout en bout.
+
+-- TP Crypto Agents

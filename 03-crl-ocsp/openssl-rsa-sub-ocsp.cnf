@@ -1,0 +1,67 @@
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = ./ca-work/Sub_RSA_CA_1_BPA
+certs             = $dir/certs
+new_certs_dir     = $dir/newcerts
+database          = $dir/db/index.txt
+serial            = $dir/db/serial
+crlnumber         = $dir/db/crlnumber
+crl               = $dir/crl.pem
+certificate       = ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt
+private_key       = ../02-pki-openssl/Sub_RSA_CA_1_BPA/private/Sub_RSA_CA_1_BPA.key.pem
+default_md        = sha256
+default_days      = 365
+policy            = policy_loose
+email_in_dn       = no
+unique_subject    = no
+copy_extensions   = none
+preserve          = no
+
+[ policy_loose ]
+countryName              = optional
+stateOrProvinceName      = optional
+localityName             = optional
+organizationName         = optional
+organizationalUnitName   = optional
+commonName               = supplied
+emailAddress             = optional
+
+[ req ]
+default_bits        = 3072
+default_md          = sha256
+prompt              = no
+distinguished_name  = dn
+
+[ dn ]
+C  = FR
+O  = TP Crypto Agents
+OU = PKI OpenSSL
+CN = placeholder
+
+[ v3_leaf ]
+basicConstraints       = critical, CA:FALSE
+keyUsage               = critical, digitalSignature, keyEncipherment
+extendedKeyUsage       = serverAuth, clientAuth
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName         = @leaf_san
+
+[ v3_leaf_ocsp ]
+basicConstraints       = critical, CA:FALSE
+keyUsage               = critical, digitalSignature, keyEncipherment
+extendedKeyUsage       = serverAuth, clientAuth
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName         = @leaf_ocsp_san
+crlDistributionPoints  = URI:http://crl.localhost:2560/Sub_RSA_CA_1_BPA.crl
+authorityInfoAccess    = OCSP;URI:http://ocsp.localhost:2560
+
+[ leaf_san ]
+DNS.1 = leaf-rsa-crl.bpa.local
+DNS.2 = leaf-rsa-crl
+
+[ leaf_ocsp_san ]
+DNS.1 = leaf-rsa-ocsp.bpa.local
+DNS.2 = leaf-rsa-ocsp

@@ -1,0 +1,21 @@
+[ v3_smime_signer ]
+basicConstraints       = critical, CA:FALSE
+keyUsage               = critical, digitalSignature, keyEncipherment
+extendedKeyUsage       = emailProtection
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName         = @smime_signer_san
+
+[ smime_signer_san ]
+email.1 = smime-user@bpa.local
+
+[ v3_smime_recipient ]
+basicConstraints       = critical, CA:FALSE
+keyUsage               = critical, digitalSignature, keyEncipherment
+extendedKeyUsage       = emailProtection
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName         = @smime_recipient_san
+
+[ smime_recipient_san ]
+email.1 = recipient-test@bpa.local

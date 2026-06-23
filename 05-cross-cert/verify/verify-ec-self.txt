@@ -1,0 +1,6 @@
+openssl verify -show_chain -CAfile /home/baptiste/tp-crypto-agents/02-pki-openssl/EC_Root_CA_BPA/certs/EC_Root_CA_BPA.crt -untrusted /home/baptiste/tp-crypto-agents/02-pki-openssl/Sub_EC_CA_1_BPA/certs/Sub_EC_CA_1_BPA.crt /home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt
+/home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt: OK
+Chain:
+depth=0: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Leaf_EC_1_BPA (untrusted)
+depth=1: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_EC_CA_1_BPA (untrusted)
+depth=2: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=EC_Root_CA_BPA

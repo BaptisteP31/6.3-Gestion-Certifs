@@ -1,0 +1,93 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            26:b9:ff:e4:59:6f:a6:1e:1a:f2:1c:63:d6:72:74:8a
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=US, O=SSL Corporation, CN=SSL.com TLS RSA Root CA 2022
+        Validity
+            Not Before: Oct 21 17:02:03 2022 GMT
+            Not After : Oct 18 17:02:02 2032 GMT
+        Subject: C=US, O=SSL Corporation, CN=SSL.com TLS Issuing RSA CA R1
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (3072 bit)
+                Modulus:
+                    00:ac:1b:02:14:40:da:3b:d9:29:e4:b5:72:f9:0e:
+                    b5:aa:cd:1c:7b:24:ee:76:47:cc:a6:73:96:f3:a5:
+                    95:82:3c:67:d4:e9:77:19:51:04:25:e1:a7:00:96:
+                    9c:5b:a3:1e:df:f0:c4:94:8d:e9:fe:80:22:1f:e4:
+                    68:cd:f4:9a:57:5c:6a:cd:76:1a:14:ba:f9:c7:0c:
+                    cf:dc:38:d4:89:5f:1e:cf:8d:50:2e:1d:78:25:92:
+                    d1:f9:65:7a:55:c3:5f:61:8d:17:d4:1b:66:be:09:
+                    9b:8e:12:02:a7:27:32:ff:d0:d1:89:b5:11:2d:a9:
+                    fa:cd:cb:a2:b2:a0:3c:f4:1f:f6:bd:56:27:40:6f:
+                    80:08:98:78:99:38:bb:91:68:20:59:3e:7f:bd:52:
+                    08:fd:4d:64:c5:4c:47:dd:bd:c5:f4:a2:bf:2f:16:
+                    71:9a:17:0d:65:b7:aa:53:ae:79:2c:b5:01:fd:6a:
+                    a6:01:c7:e7:78:08:38:d5:90:d6:88:4d:aa:09:2d:
+                    b1:bc:1c:9a:35:96:66:52:f9:16:76:55:96:53:1a:
+                    7d:bc:5a:0e:43:74:dc:a9:95:6c:73:05:53:1c:bf:
+                    ec:e1:bb:51:0a:22:5a:92:1a:eb:c7:9d:7a:2b:da:
+                    21:51:16:30:72:d5:b5:5d:8b:bb:11:f9:5a:2e:e0:
+                    f5:1a:c3:f1:10:1f:8b:cb:45:81:c7:33:6a:d4:bf:
+                    f6:79:a8:77:23:0f:17:c5:f8:25:c7:ad:e8:c4:4b:
+                    43:da:61:a0:3f:10:b2:6e:7d:27:0d:fc:8c:62:91:
+                    a2:0e:45:6b:81:21:4a:eb:df:8a:5c:2e:3f:9b:15:
+                    39:72:af:90:96:18:56:c9:14:97:96:b3:3e:42:40:
+                    5c:51:dc:92:5a:d6:69:33:7c:71:d9:88:4d:49:66:
+                    0a:23:cd:a2:d8:cc:ac:73:b4:7d:88:6e:2b:cf:9c:
+                    c9:8c:95:48:4b:b6:e2:16:ee:1d:49:34:63:5e:04:
+                    3f:5b:ee:91:9d:f8:85:cf:ce:1b
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: critical
+                CA:TRUE, pathlen:0
+            X509v3 Authority Key Identifier: 
+                FB:2E:37:EE:E3:84:7A:27:2E:CD:19:35:B1:33:7C:FF:D4:44:42:B9
+            Authority Information Access: 
+                CA Issuers - URI:http://cert.ssl.com/SSLcom-TLS-Root-2022-RSA.cer
+            X509v3 Certificate Policies: 
+                Policy: X509v3 Any Policy
+                  CPS: https://www.ssl.com/repository
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication, TLS Web Server Authentication
+            X509v3 CRL Distribution Points: 
+                Full Name:
+                  URI:http://crls.ssl.com/SSLcom-TLS-Root-2022-RSA.crl
+
+            X509v3 Subject Key Identifier: 
+                79:BA:94:77:A0:0D:19:DD:34:E6:39:A4:FC:4C:A5:D2:5A:6D:F5:8C
+            X509v3 Key Usage: critical
+                Digital Signature, Certificate Sign, CRL Sign
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        a6:7d:3e:dc:56:d8:9b:0a:47:fc:a7:70:1b:df:1c:0d:39:56:
+        d4:34:91:01:2a:09:54:b3:d8:0d:d7:df:bd:70:7f:67:08:fb:
+        f6:93:15:a1:5a:b8:18:2e:78:f7:13:74:83:dc:62:aa:3b:14:
+        52:7d:18:70:9c:f6:53:7a:21:8f:54:10:50:94:92:3b:40:60:
+        9f:c9:dc:5a:9a:4b:cd:0e:1a:a7:69:f1:ba:9d:6d:e8:36:be:
+        6a:55:e9:3f:11:36:3d:5a:68:48:ce:61:c3:af:97:38:57:a7:
+        cb:20:c7:31:20:bd:26:a2:52:49:67:c7:80:38:f2:f3:e7:55:
+        0f:dc:f9:0b:09:ed:2b:05:77:59:f3:49:df:fe:16:d0:22:3d:
+        12:8a:26:c8:cb:a7:41:02:d7:8e:e0:e9:9d:ca:1e:3e:32:99:
+        d8:b3:df:09:4e:f9:a7:df:53:27:ce:7a:aa:cf:f8:33:5c:31:
+        fe:d0:ba:e0:9c:34:0c:d8:13:15:fa:b5:8c:56:5d:db:c8:b3:
+        ff:b6:43:21:f4:b3:76:d2:9c:25:65:df:42:08:3a:b6:e2:66:
+        54:92:a9:74:2d:29:8b:f6:fd:87:3f:33:55:ac:d2:74:d4:9a:
+        9a:d6:75:ec:6b:c6:59:24:87:85:fc:bf:d9:aa:89:0b:cc:33:
+        3b:01:fe:94:e5:1c:80:89:be:ee:1b:13:aa:5d:18:6f:21:aa:
+        54:eb:ca:69:76:b5:e7:da:31:b7:0f:69:d4:08:95:97:ce:38:
+        71:22:4f:17:c4:11:88:21:6e:3d:dd:86:2f:81:d5:c6:f5:5b:
+        a4:df:b2:d1:f4:89:19:cb:d8:16:6a:1f:55:f6:34:1d:97:2f:
+        6e:e5:c2:9b:46:90:af:8f:8b:8f:de:75:b8:18:dd:94:0c:e1:
+        89:5b:ab:ec:de:c1:83:9e:52:7e:3d:de:53:3d:ee:1f:c8:02:
+        93:62:b0:ce:91:e0:dd:68:eb:53:cb:9c:9f:3c:01:82:88:e4:
+        d7:e1:85:b6:40:1e:60:e8:69:d6:f3:2b:08:dc:86:a9:17:7e:
+        35:ed:4c:7e:7b:00:37:2a:13:0f:65:7d:03:a0:b6:a8:55:d7:
+        57:3b:00:06:28:d6:ea:89:7e:50:95:c2:81:23:91:46:f5:3f:
+        6d:fc:d5:80:83:0d:d9:ea:ef:c5:ce:41:63:cb:61:c7:19:a2:
+        e9:af:90:00:f9:05:78:f5:f9:eb:44:c0:d8:2b:2b:6d:56:e7:
+        08:b9:64:27:c9:2c:78:40:c5:4b:cd:c5:10:30:c1:4b:30:85:
+        b5:4d:63:ff:72:c5:49:6d:a5:a5:ec:ba:db:a0:d3:5f:46:4a:
+        50:48:89:36:62:9c:43:e4

@@ -1,0 +1,77 @@
+openssl_conf = openssl_init
+
+[openssl_init]
+providers = provider_sect
+
+[provider_sect]
+default = default_sect
+pkcs11prov = pkcs11prov_sect
+
+[default_sect]
+activate = 1
+
+[pkcs11prov_sect]
+activate = 1
+
+[ca]
+default_ca = hsm_root_ca
+
+[hsm_root_ca]
+dir = $ENV::CA_DIR
+certificate = $ENV::CA_CERT
+private_key = pkcs11:token=$ENV::TOKEN_LABEL;object=$ENV::KEY_LABEL;type=private;id=%01;pin-value=$ENV::USER_PIN
+new_certs_dir = $ENV::NEWCERTS_DIR
+database = $ENV::CA_INDEX
+serial = $ENV::CA_SERIAL
+crlnumber = $ENV::CA_CRLNUMBER
+default_md = sha256
+default_days = 3650
+default_crl_days = 30
+policy = policy_loose
+unique_subject = no
+copy_extensions = copy
+x509_extensions = v3_root_ca
+crl_extensions = crl_ext
+
+[policy_loose]
+countryName = optional
+stateOrProvinceName = optional
+localityName = optional
+organizationName = optional
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+[req]
+prompt = no
+string_mask = utf8only
+distinguished_name = dn
+x509_extensions = v3_root_ca
+
+[dn]
+C = FR
+O = TP Crypto
+OU = 06-softhsm
+CN = HSM_Root_CA_TRI
+
+[v3_root_ca]
+basicConstraints = critical,CA:true,pathlen:1
+keyUsage = critical,keyCertSign,cRLSign
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always
+
+[v3_subca]
+basicConstraints = critical,CA:true,pathlen:0
+keyUsage = critical,keyCertSign,cRLSign
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+
+[v3_leaf]
+basicConstraints = critical,CA:false
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth,clientAuth
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+
+[crl_ext]
+authorityKeyIdentifier = keyid:always
