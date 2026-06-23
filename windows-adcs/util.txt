@@ -1,49 +1,12 @@
-Dans PowerShell admin, lance ça :
-
-Stop-Service CertSvc -Force -ErrorAction SilentlyContinue
-
-Import-Module ADCSDeployment -ErrorAction SilentlyContinue
-
-Uninstall-AdcsCertificationAuthority -Force
-
-Ensuite redémarre :
-
-Restart-Computer
-
-Après redémarrage, relance PowerShell admin puis fais :
-
-Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
-
-cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
-
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-
-.\run-on-windows.ps1
-
-Si Uninstall-AdcsCertificationAuthority -Force te dit qu’il n’y a rien à désinstaller ou qu’il échoue, fais la méthode plus bourrine mais acceptable en VM de TP :
-
-Stop-Service CertSvc -Force -ErrorAction SilentlyContinue
-
-Remove-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
-
-Restart-Computer
-
-Puis après reboot :
-
-Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
-
-cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
-
-.\run-on-windows.ps1
-
-Normalement, après ça, tu dois arriver à l’étape où il génère :
-
-C:\TP-Crypto-ADCS\output\sub-adcs-ca.req
-
-Et là ce sera normal qu’il s’arrête : il faudra signer cette CSR côté Linux, puis mettre le certificat signé dans :
-
-C:\TP-Crypto-ADCS\input\sub-adcs-ca-signed.crt
-
-et la racine Linux dans :
-
-C:\TP-Crypto-ADCS\input\root-ca.crt
+1. Dans PowerShell admin, lance ça
+Stop-Service CertSvc -Force -ErrorAction SilentlyContinueImport-Module ADCSDeployment -ErrorAction SilentlyContinueUninstall-AdcsCertificationAuthority -Force -ErrorAction SilentlyContinueRemove-WindowsFeature ADCS-Cert-Authority -IncludeManagementToolsRemove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinueRemove-Item "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc\Configuration" -Recurse -Force -ErrorAction SilentlyContinueRemove-Item "C:\Windows\System32\CertLog" -Recurse -Force -ErrorAction SilentlyContinueRemove-Item "C:\Windows\System32\CertSrv\CertEnroll" -Recurse -Force -ErrorAction SilentlyContinueRestart-Computer
+Oui, c’est un peu bourrin, mais sur une VM dédiée au TP, c’est acceptable.
+2. Après redémarrage
+Relance PowerShell en admin, puis :
+cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcsSet-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force.\run-on-windows.ps1
+Le script réinstallera lui-même le rôle ADCS.
+3. Si ça plante encore
+À ce stade, ne perds pas 1h : recrée une VM propre ou reviens à un snapshot avant ADCS. Windows ADCS est chiant : une CA partiellement configurée laisse parfois des traces qui bloquent les réinstallations.
+Avant de recréer la VM, tu peux quand même m’envoyer le résultat de :
+Get-WindowsFeature ADCS-Cert-AuthorityGet-Service CertSvc -ErrorAction SilentlyContinueGet-ChildItem "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc" -Recurse -ErrorAction SilentlyContinue | Select-Object Name
+Mais franchement, si c’est une VM neuve, le plus rapide est souvent : reset VM propre → relancer script une seule fois.
