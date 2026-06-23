@@ -1,53 +1,47 @@
-Ok, donc **tu as bien suivi**, mais Windows garde encore une config ADCS quelque part. Supprimer `C:\TP-Crypto-ADCS` ne suffit pas, et même `Remove-WindowsFeature` peut laisser des restes de configuration CertSvc.
+Oui, là je vois le vrai problème : **ce n’est pas ta VM**. C’est encore le script.
 
-Là, en VM de TP, je ferais le nettoyage complet.
-
-## 1. Dans PowerShell admin, lance ça
+Dans `Install-AdcsCertificationAuthority`, ton script passe :
 
 ```powershell
-Stop-Service CertSvc -Force -ErrorAction SilentlyContinue
-
-Import-Module ADCSDeployment -ErrorAction SilentlyContinue
-Uninstall-AdcsCertificationAuthority -Force -ErrorAction SilentlyContinue
-
-Remove-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
-
-Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
-
-Remove-Item "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc\Configuration" -Recurse -Force -ErrorAction SilentlyContinue
-
-Remove-Item "C:\Windows\System32\CertLog" -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item "C:\Windows\System32\CertSrv\CertEnroll" -Recurse -Force -ErrorAction SilentlyContinue
-
-Restart-Computer
+ValidityPeriod = 'Years'
+ValidityPeriodUnits = 5
 ```
 
-Oui, c’est un peu bourrin, mais sur une **VM dédiée au TP**, c’est acceptable.
+Or pour une **CA subordonnée**, Microsoft dit explicitement de **ne pas utiliser ces paramètres**, car la durée du certificat de CA est déterminée par la CA parente qui signe la CSR. C’est exactement ce qui provoque ton erreur `ERROR_CLUSTER_PARAMETER_MISMATCH`. ([Microsoft Learn][1])
 
-## 2. Après redémarrage
+J’ai corrigé ça dans une v3 :
+[run-on-windows-fixed-apv-v3.ps1](sandbox:/mnt/data/run-on-windows-fixed-apv-v3.ps1)
 
-Relance PowerShell en admin, puis :
+Fais ça dans ta VM :
 
 ```powershell
 cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
+
+Copy-Item .\run-on-windows-fixed-apv-v3.ps1 .\run-on-windows.ps1 -Force
+
+Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
 
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 
 .\run-on-windows.ps1
 ```
 
-Le script réinstallera lui-même le rôle ADCS.
+Cette fois, l’étape attendue est qu’il crée :
 
-## 3. Si ça plante encore
-
-À ce stade, ne perds pas 1h : **recrée une VM propre** ou reviens à un snapshot avant ADCS. Windows ADCS est chiant : une CA partiellement configurée laisse parfois des traces qui bloquent les réinstallations.
-
-Avant de recréer la VM, tu peux quand même m’envoyer le résultat de :
-
-```powershell
-Get-WindowsFeature ADCS-Cert-Authority
-Get-Service CertSvc -ErrorAction SilentlyContinue
-Get-ChildItem "HKLM:\SYSTEM\CurrentControlSet\Services\CertSvc" -Recurse -ErrorAction SilentlyContinue | Select-Object Name
+```text
+C:\TP-Crypto-ADCS\output\sub-adcs-ca.req
 ```
 
-Mais franchement, si c’est une VM neuve, le plus rapide est souvent : **reset VM propre → relancer script une seule fois**.
+Si ça arrive jusque-là puis qu’il dit que le certificat signé est absent, **c’est normal** : il faudra signer la CSR côté Linux/OpenSSL, puis mettre le certificat signé dans :
+
+```text
+C:\TP-Crypto-ADCS\input\sub-adcs-ca-signed.crt
+```
+
+et le certificat racine dans :
+
+```text
+C:\TP-Crypto-ADCS\input\root-ca.crt
+```
+
+[1]: https://learn.microsoft.com/en-us/powershell/module/adcsdeployment/install-adcscertificationauthority?view=windowsserver2025-ps&utm_source=chatgpt.com "Install-AdcsCertificationAuthority (ADCSDeployment)"

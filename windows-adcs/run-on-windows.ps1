@@ -183,15 +183,17 @@ function Create-SubCARequest {
         return
     }
 
+    # Important: pour une CA subordonnee, ne PAS passer ValidityPeriod/ValidityPeriodUnits ici.
+    # La duree du certificat de CA sera imposee par la CA parente lors de la signature.
     $params = @{
         CAType               = 'StandaloneSubordinateCA'
         CACommonName         = $CACommonName
         CryptoProviderName   = 'RSA#Microsoft Software Key Storage Provider'
         KeyLength            = $KeyLength
         HashAlgorithmName    = $HashAlgorithm
-        ValidityPeriod       = 'Years'
-        ValidityPeriodUnits  = $CAValidityYears
         OutputCertRequestFile = $SubCARequestPath
+        OverwriteExistingKey = $true
+        OverwriteExistingDatabase = $true
         Force                = $true
     }
     Add-ExecutedCommand -CommandText ("Install-AdcsCertificationAuthority " + (($params.GetEnumerator() | ForEach-Object { "-$($_.Key) $($_.Value)" }) -join ' '))
