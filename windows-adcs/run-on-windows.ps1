@@ -10,7 +10,7 @@ $ErrorActionPreference = 'Stop'
 ##>
 
 $WorkDir = "C:\TP-Crypto-ADCS"
-$CACommonName = "Sub_ADCS_CA_BPA"
+$CACommonName = "Sub_ADCS_CA_APV"
 $CAValidityYears = 5
 $KeyLength = 4096
 $HashAlgorithm = "SHA256"
@@ -106,7 +106,7 @@ function Get-CAConfigString {
 function Assert-Administrator {
     $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object Security.Principal.WindowsPrincipal($identity)
-    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'Le script doit etre execute en tant qu\'administrateur.' }
+    if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'Le script doit etre execute en tant qu''administrateur.' }
     Write-StepLog -Message 'Verification administrateur OK.'
 }
 
@@ -195,6 +195,7 @@ function Create-SubCARequest {
         Force                = $true
     }
     Add-ExecutedCommand -CommandText ("Install-AdcsCertificationAuthority " + (($params.GetEnumerator() | ForEach-Object { "-$($_.Key) $($_.Value)" }) -join ' '))
+    Import-Module ADCSDeployment -ErrorAction Stop
     Install-AdcsCertificationAuthority @params | Out-Null
 
     if (-not (Test-Path $SubCARequestPath)) { throw "La requete CSR attendue n'a pas ete generee: $SubCARequestPath" }
@@ -222,7 +223,7 @@ function Import-RootCACertificate {
 function Complete-SubCAInstallation {
     if (-not (Test-Path $SubCACertSignedPath)) {
         Write-Host "A faire : signer la CSR sur Linux, puis placer le certificat signe ici : $SubCACertSignedPath"
-        Write-StepLog -Message 'Certificat signe absent. Finalisation de l' + "'" + 'AC subordonnee repoussee.' -Level 'WARN'
+        Write-StepLog -Message "Certificat signe absent. Finalisation de l'AC subordonnee repoussee." -Level 'WARN'
         return $false
     }
 
@@ -259,7 +260,7 @@ function Complete-SubCAInstallation {
 function Configure-CAValidity {
     $caReg = Get-CARegistryPath
     if (-not (Test-Path $caReg)) {
-        Write-StepLog -Message 'Impossible de configurer la validite: la CA n'est pas encore initialisee.' -Level 'WARN'
+        Write-StepLog -Message "Impossible de configurer la validite: la CA n'est pas encore initialisee." -Level 'WARN'
         return
     }
 
@@ -305,7 +306,7 @@ _continue_ = "DNS=$WebCertDnsName"
 
 function Submit-And-Issue-WebTLSCertificate {
     if (-not $script:CAReady) {
-        Write-StepLog -Message 'Le sous-CA n'est pas encore operationnel. La demande web sera conservee pour plus tard.' -Level 'WARN'
+        Write-StepLog -Message "Le sous-CA n'est pas encore operationnel. La demande web sera conservee pour plus tard." -Level 'WARN'
         return $false
     }
     if (-not (Test-Path $WebCertRequestPath)) {
@@ -347,7 +348,7 @@ function Export-Evidence {
     $reportPath = Join-Path $WorkDir 'RAPPORT-WINDOWS-ADCS.md'
     $files = @($RootCACertPath,$SubCACertSignedPath,$SubCARequestPath,$WebCertRequestPath,$WebCertPath,(Join-Path $WorkDir 'README-ACTIONS-MANUELLES.txt'),(Join-Path $LogRoot 'root-store.txt'),(Join-Path $LogRoot 'certsvc-status.txt'),(Join-Path $LogRoot 'web-cert-dump.txt'),(Join-Path $LogRoot 'web-cert-verify.txt'),$script:TranscriptPath) | Where-Object { $_ -and (Test-Path $_) }
     $statusLines = @(
-        '# Rapport Windows ADCS','', '## Etat d\'avancement',
+        '# Rapport Windows ADCS','', '## Etat d''avancement',
         "- Sous-CA prepare: $(if (Test-Path $SubCARequestPath) { 'oui' } else { 'non' })",
         "- Certificat racine importe: $(if (Test-Path $RootCACertPath) { 'fichier present' } else { 'a importer' })",
         "- Sous-CA finalisee: $(if ($script:CAReady) { 'oui' } else { 'non' })",
@@ -357,8 +358,8 @@ function Export-Evidence {
     foreach ($cmd in $script:ExecutedCommands) { $statusLines += "- `$cmd`" }
     $statusLines += ''; $statusLines += '## Fichiers produits'
     foreach ($f in $files) { $statusLines += "- [$([IO.Path]::GetFileName($f))]($f)" }
-    $statusLines += ''; $statusLines += '## Captures d\'ecran a faire'; $statusLines += '- Lancement du script en administrateur.'; $statusLines += '- Presence de la CSR du sous-CA.'; $statusLines += '- Import du certificat racine dans Root.'; $statusLines += '- Etat du service CertSvc.'; $statusLines += '- Dump et verification du certificat TLS.'
-    $statusLines += ''; $statusLines += '## Points a completer cote Linux'; $statusLines += '- Signer la CSR du sous-CA Windows avec l\'AC racine OpenSSL/SoftHSM2.'; $statusLines += "- Copier le certificat signe dans: $SubCACertSignedPath"; $statusLines += "- Copier le certificat racine dans: $RootCACertPath"
+    $statusLines += ''; $statusLines += '## Captures d''ecran a faire'; $statusLines += '- Lancement du script en administrateur.'; $statusLines += '- Presence de la CSR du sous-CA.'; $statusLines += '- Import du certificat racine dans Root.'; $statusLines += '- Etat du service CertSvc.'; $statusLines += '- Dump et verification du certificat TLS.'
+    $statusLines += ''; $statusLines += '## Points a completer cote Linux'; $statusLines += '- Signer la CSR du sous-CA Windows avec l''AC racine OpenSSL/SoftHSM2.'; $statusLines += "- Copier le certificat signe dans: $SubCACertSignedPath"; $statusLines += "- Copier le certificat racine dans: $RootCACertPath"
     $statusLines += ''; $statusLines += '## Preuves certutil importantes'; $statusLines += "- `certutil -store Root`"; $statusLines += "- `certutil -dump $WebCertPath`"; $statusLines += "- `certutil -verify $WebCertPath`"
     Set-Content -Path $reportPath -Value ($statusLines -join [Environment]::NewLine) -Encoding UTF8
 }
@@ -370,7 +371,7 @@ function Print-NextSteps {
     Write-Host '2. La signer cote Linux/OpenSSL/SoftHSM2.'
     Write-Host "3. Placer le certificat signe ici : $SubCACertSignedPath"
     Write-Host '4. Relancer ce script pour finaliser le sous-CA.'
-    Write-Host '5. Faire les captures demandees dans : ' + $ManualRoot
+    Write-Host "5. Faire les captures demandees dans : $ManualRoot"
     Write-Host "6. Revoir le rapport final ici : $(Join-Path $WorkDir 'RAPPORT-WINDOWS-ADCS.md')"
 }
 
@@ -389,7 +390,7 @@ function Main {
             Verify-WebCertificate
         }
         else {
-            Write-StepLog -Message 'Le sous-CA n'est pas complet. Les etapes web seront traitees au prochain passage.' -Level 'WARN'
+            Write-StepLog -Message "Le sous-CA n'est pas complet. Les etapes web seront traitees au prochain passage." -Level 'WARN'
         }
         Export-Evidence
         Print-NextSteps

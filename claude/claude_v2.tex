@@ -109,7 +109,7 @@
 % ====================== EN-TETES ======================
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\footnotesize TP --- Applications de la cryptographie}
+\fancyhead[L]{\footnotesize TP --- Cryptographie}
 \fancyhead[R]{\footnotesize Gestion du cycle de vie des certificats}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -137,29 +137,11 @@
 {\large Gestion du cycle de vie des certificats}\\[2cm]
 
 \rule{\linewidth}{0.5pt}\\[0.4cm]
-{\Huge\bfseries Travaux pratiques\\[0.3cm]Applications de la cryptographie\par}
+{\Huge\bfseries TP\\[0.3cm]Cryptographie\par}
 \vspace{0.4cm}
-{\large Construction et exploitation d'une infrastructure de gestion de clés (PKI)\\
-avec OpenSSL et SoftHSM2\par}
+{\large Construction et exploitation d'une infrastructure de gestion de clés\par}
 \rule{\linewidth}{0.5pt}\\[1.5cm]
 
-\begin{tabular}{rl}
-\textbf{Outils} & OpenSSL 3.0.13, SoftHSM2 2.6.1, OpenSC (pkcs11-tool)\\[4pt]
-\textbf{Système} & GNU/Linux (Ubuntu 24.04)\\[4pt]
-\textbf{Trigramme} & \tri{}\\[4pt]
-\textbf{Date} & 22--23 juin 2026\\
-\end{tabular}
-
-\vfill
-\begin{tcolorbox}[colback=notebg,colframe=noteframe,boxrule=0.8pt,arc=2pt,width=0.92\linewidth]
-\footnotesize\textbf{Comment lire ce rapport.} Les commandes réellement exécutées
-apparaissent sur fond sombre, les sorties OpenSSL correspondantes sur fond clair.
-Les encadrés \textcolor{phframe}{\textbf{orange}} signalent les points qui exigent un
-accès réseau « live » (Partie~1) ou une VM Windows Server (magasin de certificats,
-ADCS) : la \emph{méthode} et les \emph{commandes exactes} y sont fournies, seules les
-\emph{valeurs} ou \emph{captures} restent à compléter sur la plateforme cible.
-\end{tcolorbox}
-\vspace{1cm}
 \end{titlepage}
 
 \tableofcontents
