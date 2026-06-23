@@ -1,47 +1,92 @@
-Oui, là je vois le vrai problème : **ce n’est pas ta VM**. C’est encore le script.
+Tu as raison d’arrêter l’ancien script : il était trop fragile. J’ai refait un dossier **windows-adcs** complet depuis zéro, avec un nouveau `run-on-windows.ps1`.
 
-Dans `Install-AdcsCertificationAuthority`, ton script passe :
+J’ai corrigé les vraies causes probables de tes erreurs :
 
-```powershell
-ValidityPeriod = 'Years'
-ValidityPeriodUnits = 5
+* nom ADCS sans underscores : `Sub-ADCS-CA-APV` au lieu de `Sub_ADCS_CA_APV`, pour éviter les soucis d’encodage ADCS ;
+* pas de `ValidityPeriod` / `ValidityPeriodUnits` lors de la création de la **subordinate CA**, car Microsoft précise que pour une CA subordonnée, la validité est déterminée par la CA parente ; ([Microsoft Learn][1])
+* ajout de `-IgnoreUnicode` ;
+* premier lancement propre : génère la CSR puis s’arrête sans erreur rouge si le certificat signé n’est pas encore présent ;
+* option `-ResetADCS` intégrée pour nettoyer les restes ADCS d’une VM de TP ;
+* logs + rapport Markdown générés dans `C:\TP-Crypto-ADCS`.
+
+Le TP demande bien une CA subordonnée Windows ADCS en mode **Standalone**, avec CSR PKCS#10, signée ensuite par la racine Linux/OpenSSL/SoftHSM2.  Microsoft confirme que `Install-AdcsCertificationAuthority` accepte bien `StandaloneSubordinateCA`, `OutputCertRequestFile`, `KeyLength`, `HashAlgorithmName`, etc. ([Microsoft Learn][1]) Et `certreq` sert bien à créer une requête depuis un `.inf`, soumettre une demande, récupérer/accepter un certificat. ([Microsoft Learn][2])
+
+Télécharge le dossier complet ici :
+[windows-adcs.zip](sandbox:/mnt/data/windows-adcs.zip)
+
+Fichiers créés :
+
+```text
+windows-adcs/
+├── README.md
+├── run-on-windows.ps1
+├── sign-subca-on-linux.sh
+├── templates/
+│   ├── web-tls.inf
+│   └── subordinate-ca-notes.md
+└── output/
+    └── .gitkeep
 ```
 
-Or pour une **CA subordonnée**, Microsoft dit explicitement de **ne pas utiliser ces paramètres**, car la durée du certificat de CA est déterminée par la CA parente qui signe la CSR. C’est exactement ce qui provoque ton erreur `ERROR_CLUSTER_PARAMETER_MISMATCH`. ([Microsoft Learn][1])
+Vérification faite côté sandbox :
 
-J’ai corrigé ça dans une v3 :
-[run-on-windows-fixed-apv-v3.ps1](sandbox:/mnt/data/run-on-windows-fixed-apv-v3.ps1)
+```text
+run-on-windows.ps1       662 lignes
+sign-subca-on-linux.sh    76 lignes
+README.md                176 lignes
+```
 
-Fais ça dans ta VM :
+Dans ta VM, remplace complètement ton ancien dossier `windows-adcs` par celui du zip, puis lance directement :
 
 ```powershell
 cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
-
-Copy-Item .\run-on-windows-fixed-apv-v3.ps1 .\run-on-windows.ps1 -Force
-
-Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
-
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-
-.\run-on-windows.ps1
+.\run-on-windows.ps1 -ResetADCS
 ```
 
-Cette fois, l’étape attendue est qu’il crée :
+Pour une VM déjà polluée par les essais précédents, utilise bien **`-ResetADCS` au premier lancement**.
+
+Résultat attendu au premier passage :
 
 ```text
 C:\TP-Crypto-ADCS\output\sub-adcs-ca.req
 ```
 
-Si ça arrive jusque-là puis qu’il dit que le certificat signé est absent, **c’est normal** : il faudra signer la CSR côté Linux/OpenSSL, puis mettre le certificat signé dans :
+Ensuite tu copies cette CSR côté Linux dans :
 
 ```text
-C:\TP-Crypto-ADCS\input\sub-adcs-ca-signed.crt
+windows-adcs/from-windows/sub-adcs-ca.req
 ```
 
-et le certificat racine dans :
+Puis côté Linux :
+
+```bash
+chmod +x windows-adcs/sign-subca-on-linux.sh
+./windows-adcs/sign-subca-on-linux.sh
+```
+
+Points à adapter côté Linux avant signature :
+
+```bash
+ROOT_CA_CERT="../06-softhsm/certs/root-ca.crt"
+ROOT_CA_CONFIG="../06-softhsm/openssl-root-ca.cnf"
+ROOT_CA_NAME="HSM_Root_CA_BPA"
+```
+
+Après signature, remets côté Windows :
 
 ```text
-C:\TP-Crypto-ADCS\input\root-ca.crt
+sub-adcs-ca-signed.crt -> C:\TP-Crypto-ADCS\input\sub-adcs-ca-signed.crt
+root-ca.crt            -> C:\TP-Crypto-ADCS\input\root-ca.crt
 ```
 
-[1]: https://learn.microsoft.com/en-us/powershell/module/adcsdeployment/install-adcscertificationauthority?view=windowsserver2025-ps&utm_source=chatgpt.com "Install-AdcsCertificationAuthority (ADCSDeployment)"
+Puis relance sans reset :
+
+```powershell
+.\run-on-windows.ps1
+```
+
+Important : **ne remets pas les underscores dans le nom de CA ADCS**. Pour le compte rendu, tu peux expliquer que le nom logique du TP est APV, mais que le nom ADCS Windows a été normalisé en `Sub-ADCS-CA-APV` pour éviter les problèmes d’encodage.
+
+[1]: https://learn.microsoft.com/en-us/powershell/module/adcsdeployment/install-adcscertificationauthority?view=windowsserver2025-ps "Install-AdcsCertificationAuthority (ADCSDeployment) | Microsoft Learn"
+[2]: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/certreq_1 "certreq | Microsoft Learn"
