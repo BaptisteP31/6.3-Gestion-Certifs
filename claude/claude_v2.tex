@@ -1,0 +1,1112 @@
+\documentclass[11pt,a4paper]{article}
+
+% ====================== ENCODAGE / LANGUE ======================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french,provide=*]{babel}
+
+% ====================== MISE EN PAGE ======================
+\usepackage[a4paper,margin=2.3cm,headheight=15pt]{geometry}
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+
+% ====================== COULEURS ======================
+\definecolor{cmdbg}{RGB}{31,41,55}       % fond commandes (gris ardoise)
+\definecolor{cmdfg}{RGB}{229,231,235}     % texte commandes
+\definecolor{outbg}{RGB}{244,245,247}     % fond sorties
+\definecolor{outframe}{RGB}{203,213,225}
+\definecolor{accent}{RGB}{37,99,235}      % bleu accent
+\definecolor{phbg}{RGB}{255,243,224}      % fond placeholder
+\definecolor{phframe}{RGB}{234,88,12}     % bord placeholder (orange)
+\definecolor{repbg}{RGB}{236,253,245}     % fond reponse (vert clair)
+\definecolor{repframe}{RGB}{16,185,129}
+\definecolor{notebg}{RGB}{239,246,255}    % fond note (bleu clair)
+\definecolor{noteframe}{RGB}{59,130,246}
+\definecolor{kw}{RGB}{96,165,250}
+\definecolor{cmt}{RGB}{148,163,184}
+
+% ====================== STYLES DE CODE ======================
+% Commandes shell : fond sombre
+\lstdefinestyle{cmd}{
+  backgroundcolor=\color{cmdbg},
+  basicstyle=\ttfamily\footnotesize\color{cmdfg},
+  breaklines=true,
+  breakatwhitespace=false,
+  postbreak=\mbox{\textcolor{cmt}{$\hookrightarrow$}\space},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{cmdbg},
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  aboveskip=8pt,
+  belowskip=4pt,
+}
+% Sorties OpenSSL : fond clair
+\lstdefinestyle{out}{
+  backgroundcolor=\color{outbg},
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  breakatwhitespace=false,
+  postbreak=\mbox{\textcolor{cmt}{$\hookrightarrow$}\space},
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{outframe},
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+}
+% Fichier de configuration
+\lstdefinestyle{conf}{
+  backgroundcolor=\color{outbg},
+  basicstyle=\ttfamily\scriptsize,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  framesep=5pt,
+  rulecolor=\color{outframe},
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  commentstyle=\color{cmt}\itshape,
+  morecomment=[l]{\#},
+}
+\lstset{style=cmd}
+
+% ====================== BOITES (placeholder / reponse / note) ======================
+\newtcolorbox{placeholder}[1][]{
+  colback=phbg, colframe=phframe, coltitle=white,
+  fonttitle=\bfseries, title={\faToReplace À COMPLÉTER (non réalisable hors ligne / hors VM)},
+  boxrule=1pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt, #1}
+\newtcolorbox{reponse}[1][]{
+  colback=repbg, colframe=repframe, coltitle=white,
+  fonttitle=\bfseries, title={Réponse},
+  boxrule=1pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt, #1}
+\newtcolorbox{notebox}[1][]{
+  colback=notebg, colframe=noteframe, coltitle=white,
+  fonttitle=\bfseries, title={Note},
+  boxrule=1pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt, #1}
+% petit symbole pour le titre placeholder
+\newcommand{\faToReplace}{$\blacktriangleright$~}
+
+% ====================== EN-TETES ======================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize TP --- Applications de la cryptographie}
+\fancyhead[R]{\footnotesize Gestion du cycle de vie des certificats}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% titres de section colores
+\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{accent!80!black}}{\thesubsubsection}{0.6em}{}
+
+% macros pratiques
+\newcommand{\tri}{\texttt{APV}}
+\newcommand{\fichier}[1]{\texttt{#1}}
+\newcommand{\cmdinline}[1]{\colorbox{outbg}{\ttfamily\small #1}}
+
+\begin{document}
+
+% ============================================================
+%                        PAGE DE TITRE
+% ============================================================
+\begin{titlepage}
+\centering
+\vspace*{1.5cm}
+{\Large\scshape IMT Mines Alès}\\[0.3cm]
+{\large Gestion du cycle de vie des certificats}\\[2cm]
+
+\rule{\linewidth}{0.5pt}\\[0.4cm]
+{\Huge\bfseries Travaux pratiques\\[0.3cm]Applications de la cryptographie\par}
+\vspace{0.4cm}
+{\large Construction et exploitation d'une infrastructure de gestion de clés (PKI)\\
+avec OpenSSL et SoftHSM2\par}
+\rule{\linewidth}{0.5pt}\\[1.5cm]
+
+\begin{tabular}{rl}
+\textbf{Outils} & OpenSSL 3.0.13, SoftHSM2 2.6.1, OpenSC (pkcs11-tool)\\[4pt]
+\textbf{Système} & GNU/Linux (Ubuntu 24.04)\\[4pt]
+\textbf{Trigramme} & \tri{}\\[4pt]
+\textbf{Date} & 22--23 juin 2026\\
+\end{tabular}
+
+\vfill
+\begin{tcolorbox}[colback=notebg,colframe=noteframe,boxrule=0.8pt,arc=2pt,width=0.92\linewidth]
+\footnotesize\textbf{Comment lire ce rapport.} Les commandes réellement exécutées
+apparaissent sur fond sombre, les sorties OpenSSL correspondantes sur fond clair.
+Les encadrés \textcolor{phframe}{\textbf{orange}} signalent les points qui exigent un
+accès réseau « live » (Partie~1) ou une VM Windows Server (magasin de certificats,
+ADCS) : la \emph{méthode} et les \emph{commandes exactes} y sont fournies, seules les
+\emph{valeurs} ou \emph{captures} restent à compléter sur la plateforme cible.
+\end{tcolorbox}
+\vspace{1cm}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+%                     INTRODUCTION GENERALE
+% ============================================================
+\section{Introduction et conventions}
+
+\subsection{Objectifs}
+Ce TP se décompose en trois parties complémentaires :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{Partie 1 --- Étude de certificats existants.} Récupération et analyse
+  du certificat TLS du site \url{https://cyber.gouv.fr/}, lecture de la chaîne de
+  certification, des extensions, de la CRL, et vérification de statut de révocation
+  par CRL puis par OCSP.
+  \item \textbf{Partie 2 --- Construction d'une PKI multi-autorités.} Mise en place
+  d'une hiérarchie inspirée de Let's Encrypt (deux racines, RSA et ECDSA, deux
+  autorités subordonnées), avec révocation par CRL et par OCSP, échange S/MIME et
+  \emph{certification croisée} entre les deux racines.
+  \item \textbf{Partie 3 --- Racine adossée à un HSM.} Création d'une autorité racine
+  dont la clé privée ne quitte jamais un module cryptographique (HSM virtuel
+  SoftHSM2, via PKCS\#11), puis signature d'une autorité subordonnée Microsoft ADCS.
+\end{itemize}
+
+\subsection{Environnement de travail}
+\begin{lstlisting}[style=out]
+$ openssl version
+OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)
+\end{lstlisting}
+Le travail est placé sur la machine de rendu dans \fichier{/home/aurelien/Documents/certificats}.
+
+Les paquets suivants ont été installés pour la Partie~3 :
+\cmdinline{softhsm2}, \cmdinline{opensc} (fournit \fichier{pkcs11-tool}) et
+\cmdinline{libengine-pkcs11-openssl} (moteur PKCS\#11 pour OpenSSL).
+
+\subsection{Choix de dimensionnement (recommandations ANSSI)}
+\label{sec:anssi}
+Le sujet impose de choisir les algorithmes, tailles de clés et fonctions de hachage
+« en fonction des recommandations de l'ANSSI en vigueur ». Le document de référence
+est le \emph{Guide des mécanismes cryptographiques} (RGS, annexe B1). Les règles
+mobilisées ici sont : module RSA d'au moins 2048 bits (3072 recommandé au-delà de
+2030), clés sur courbes elliptiques d'au moins 256 bits, et fonction de hachage de la
+famille SHA-2 (au moins 256 bits). Nos choix :
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{>{\raggedright}p{4.3cm} l l l}
+\toprule
+\textbf{Entité} & \textbf{Algorithme} & \textbf{Taille / courbe} & \textbf{Hachage}\\
+\midrule
+\fichier{RSA\_Root\_CA\_\tri} (racine)      & RSA   & 4096 bits     & SHA-256\\
+\fichier{Sub\_RSA\_CA\_1\_\tri} (sous-AC)    & RSA   & 3072 bits     & SHA-256\\
+\fichier{EC\_Root\_CA\_\tri} (racine)        & ECDSA & secp384r1 (P-384) & SHA-256\\
+\fichier{Sub\_EC\_CA\_1\_\tri} (sous-AC)     & ECDSA & secp384r1 (P-384) & SHA-256\\
+Entité finale RSA                            & RSA   & 3072 bits     & SHA-256\\
+Entité finale EC                             & ECDSA & prime256v1 (P-256) & SHA-256\\
+Racine HSM (Partie 3)                        & RSA   & 4096 bits     & SHA-256\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{notebox}
+\textbf{Nuances ANSSI à mentionner à l'oral.} (1)~L'ANSSI recommande de préférence les
+courbes \emph{brainpool} (ex.\ \texttt{brainpoolP384r1}) ; nous avons retenu les
+courbes NIST (P-384/P-256) pour la compatibilité avec les magasins Windows et les
+navigateurs, ce qui correspond aussi au choix réel de Let's Encrypt.
+(2)~Avec une clé P-384, le hachage « naturellement apparié » serait SHA-384 ; SHA-256
+reste néanmoins conforme et a été retenu par homogénéité sur toute la PKI.
+\end{notebox}
+
+\subsection{Durées de validité demandées}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{l l l}
+\toprule
+\textbf{Objet} & \textbf{Durée} & \textbf{Valeur \cmdinline{-days} / CRL}\\
+\midrule
+AC racines            & 15 ans  & \texttt{5479} jours\\
+AC subordonnées       & 10 ans  & \texttt{3653} jours\\
+Entités finales       & 1 an    & \texttt{365} jours\\
+CRL / ARL             & 1 mois  & \texttt{default\_crl\_days = 30}\\
+Racine HSM (Partie 3) & 10 ans  & \texttt{3653} jours\\
+AC subordonnée ADCS   & 5 ans   & \texttt{1825} jours\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{notebox}
+\textbf{Convention de nommage.} Le DN commun à toutes les entités est
+\texttt{C=FR, O=TP IMT Mines Ales, OU=PKI \tri}, le \texttt{CN} portant le nom de
+l'entité (ex.\ \texttt{RSA Root CA \tri}). Le trigramme retenu pour ce compte rendu est \tri{}.
+\end{notebox}
+
+\begin{notebox}
+\textbf{Simplification assumée sur les clés d'entité finale.} Pour fluidifier le TP, les
+clés privées des entités finales sont générées \emph{non chiffrées}
+(\texttt{encrypt\_key = no}). En production, ces clés doivent être protégées par phrase
+de passe ou, mieux, conservées dans un module matériel --- ce qui est précisément
+l'objet de la Partie~3.
+\end{notebox}
+
+\newpage
+
+% ============================================================
+%                          PARTIE 1
+% ============================================================
+\section{Partie 1 --- Étude de certificats existants}
+
+Les valeurs ci-dessous reprennent les résultats observés dans les fichiers de sortie du TP.
+Les captures navigateur restent à ajouter lorsqu'elles sont demandées explicitement par le sujet.
+
+\subsection{Récupération du certificat (Q1)}
+
+\textbf{Q1. Quel protocole sécurise la connexion dans un navigateur ?}
+\begin{reponse}
+La connexion HTTPS est sécurisée par \textbf{TLS}. La connexion OpenSSL observée a utilisé
+\texttt{TLSv1.3}. SSL est l'ancien nom historique ; aujourd'hui, le protocole utilisé est TLS.
+\end{reponse}
+
+\begin{lstlisting}[style=cmd]
+openssl s_client -connect cyber.gouv.fr:443 -servername cyber.gouv.fr -showcerts \
+  2>/dev/null </dev/null > cyber.gouv.fr.chain.txt
+awk '/BEGIN CERTIFICATE/{c++} END{print c}' cyber.gouv.fr.chain.txt
+openssl s_client -connect cyber.gouv.fr:443 -servername cyber.gouv.fr 2>/dev/null </dev/null \
+  | openssl x509 -out cyber.gouv.fr.pem
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+2
+\end{lstlisting}
+
+\subsection{Lecture de la chaîne (Q2 à Q5)}
+\begin{reponse}
+\textbf{Q2. Longueur de la chaîne :} la chaîne fournie par \texttt{openssl s\_client}
+contient \textbf{2 certificats} : le certificat serveur \texttt{cyber.gouv.fr} et le
+certificat subordonné \texttt{GandiCert}. La racine n'est pas envoyée par le serveur car
+elle est supposée présente dans le magasin de confiance du client.\\[4pt]
+\textbf{Q3. AC racine :} \texttt{DigiCert Global Root G2}. Elle n'est pas fournie dans
+la chaîne TLS récupérée, mais constitue l'ancre de confiance de la chaîne
+\texttt{GandiCert}.\\[4pt]
+\textbf{Q4. AC subordonnée :} le certificat serveur est émis par
+\texttt{C=FR, O=Gandi SAS, CN=GandiCert}.\\[4pt]
+\textbf{Q5. Taille de la clé publique du site :} le certificat \texttt{cyber.gouv.fr}
+contient une clé publique \textbf{RSA 4096 bits}.
+\end{reponse}
+
+\subsection{Analyse détaillée du certificat (Q6 à Q16)}
+\begin{lstlisting}[style=cmd]
+openssl x509 -in cyber.gouv.fr.pem -noout -text > cyber.gouv.fr.x509.txt
+\end{lstlisting}
+
+\textbf{Q6. Type de certificat.}
+\begin{reponse}
+Il s'agit d'un certificat X.509 v3 d'entité finale pour serveur TLS. Le sujet contient
+\texttt{CN=cyber.gouv.fr}. Les SAN observés sont \texttt{DNS:cyber.gouv.fr},
+\texttt{DNS:ssi.gouv.fr}, \texttt{DNS:www.ssi.gouv.fr} et
+\texttt{DNS:www.cyber.gouv.fr}. L'Extended Key Usage contient
+\texttt{TLS Web Server Authentication} et les \texttt{Basic Constraints} indiquent
+\texttt{CA:FALSE}.
+\end{reponse}
+
+\textbf{Q7. Peut-il signer d'autres certificats ?}
+\begin{reponse}
+\textbf{Non.} Le certificat contient \texttt{Basic Constraints: CA:FALSE}. Son
+\texttt{Key Usage} vaut \texttt{Digital Signature, Key Encipherment} et ne contient pas
+\texttt{keyCertSign}. Il ne peut donc pas signer d'autres certificats.
+\end{reponse}
+
+\textbf{Q8. Peut-il signer du courrier électronique ?}
+\begin{reponse}
+\textbf{Non pour l'usage S/MIME.} L'Extended Key Usage contient uniquement
+\texttt{TLS Web Server Authentication} et ne contient pas \texttt{E-mail Protection}
+(\texttt{emailProtection}).
+\end{reponse}
+
+\textbf{Q9. Où trouve-t-on la CRL de l'AC émettrice ?}
+\begin{reponse}
+Les points de distribution CRL réellement présents sont :
+\begin{lstlisting}[style=out]
+http://crl3.digicert.com/GandiCert.crl
+http://crl4.digicert.com/GandiCert.crl
+\end{lstlisting}
+\end{reponse}
+
+\textbf{Q10. Format du numéro de série et conversion décimale.}
+\begin{reponse}
+Le numéro de série est affiché en hexadécimal par OpenSSL.
+\begin{lstlisting}[style=out]
+Serial hex avec separateurs : 05:7e:1f:dd:c4:8e:7a:07:80:64:3a:be:eb:cc:52:a5
+Serial hex normalise       : 057E1FDDC48E7A0780643ABEEBCC52A5
+Serial decimal             : 7301015708052902158374241928634716837
+\end{lstlisting}
+Il s'agit d'un entier ASN.1 affiché en hexadécimal ; la valeur décimale montre qu'il
+s'agit d'un grand nombre non trivial à prédire.
+\end{reponse}
+
+\textbf{Q11. Afficher la clé publique.}
+\begin{lstlisting}[style=cmd]
+openssl x509 -in cyber.gouv.fr.pem -pubkey -noout
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+Public Key Algorithm: rsaEncryption
+Public-Key: (4096 bit)
+Exponent: 65537 (0x10001)
+\end{lstlisting}
+
+\textbf{Q12. Afficher la clé privée.}
+\begin{reponse}
+C'est impossible à partir du certificat public. Un certificat X.509 contient la clé
+publique, l'identité, les extensions et la signature de l'autorité, mais jamais la clé
+privée. Celle-ci reste uniquement côté serveur.
+\end{reponse}
+
+\textbf{Q13 à Q16. Lecture et vérification de la CRL.}
+\begin{lstlisting}[style=cmd]
+wget -O GandiCert.crl http://crl3.digicert.com/GandiCert.crl
+openssl crl -inform DER -in GandiCert.crl -text -noout > crl.txt
+rg "057E1FDDC48E7A0780643ABEEBCC52A5|05:7E:1F:DD:C4:8E:7A:07:80:64:3A:BE:EB:CC:52:A5" crl.txt
+\end{lstlisting}
+\begin{reponse}
+\textbf{Q13.} La CRL consultée indique :
+\begin{lstlisting}[style=out]
+Last Update: Jun 22 12:45:56 2026 GMT
+Next Update: Jun 29 12:45:56 2026 GMT
+\end{lstlisting}
+Sa durée de validité est donc de \textbf{7 jours}.\\[4pt]
+\textbf{Q14.} Les premières entrées affichées dans \texttt{crl.txt} ne montrent que le
+numéro de série et la date de révocation. Des champs \texttt{X509v3 CRL Reason Code}
+apparaissent plus loin, mais pas systématiquement pour les premières entrées.\\[4pt]
+\textbf{Q15.} Pour vérifier rapidement que la CRL est la bonne, on contrôle que son
+\texttt{Issuer} correspond à l'AC émettrice du certificat
+(\texttt{C=FR, O=Gandi SAS, CN=GandiCert}), que l'URL provient bien des
+\texttt{CRL Distribution Points}, puis que la signature de la CRL est vérifiable avec
+le certificat de cette AC.\\[4pt]
+\textbf{Q16.} La recherche du numéro de série du certificat \texttt{cyber.gouv.fr} dans
+la CRL ne renvoie aucun résultat : le certificat n'apparaît donc pas comme révoqué dans
+la CRL consultée.
+\end{reponse}
+
+\subsection{La révocation (Q17 à Q21)}
+
+\textbf{Site \texttt{https://revoked-rsa-dv.ssl.com/} dans 3 navigateurs.}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.48\linewidth]{images/revoked_rsa_chrome.png}\hfill
+  \includegraphics[width=0.48\linewidth]{images/revoked_rsa_firefox.png}
+  \caption{Pages d'erreur de sécurité pour \url{https://revoked-rsa-dv.ssl.com} : à gauche Chromium/Chrome (NET::ERR\_CERT\_REVOKED), à droite Firefox (SEC\_ERROR\_REVOKED\_CERTIFICATE).}
+  \label{fig:revoked-browsers}
+\end{figure}
+
+\textbf{Q17. Le série du certificat révoqué est-il dans la CRL ?}
+\begin{reponse}
+Oui. Le certificat testé est \texttt{01-public-certs/revoked-rsa-dv.ssl.com.pem}. Son
+numéro de série est :
+\begin{lstlisting}[style=out]
+1811B09C4BB9E179133BB9D9A9B140C5
+\end{lstlisting}
+La CRL utilisée est \texttt{http://crls.ssl.com/SSL.com-TLS-I-RSA-R1.crl}. Le numéro y
+apparaît avec la date de révocation suivante :
+\begin{lstlisting}[style=out]
+Serial Number: 1811B09C4BB9E179133BB9D9A9B140C5
+Revocation Date: Jun  9 14:37:38 2026 GMT
+\end{lstlisting}
+\end{reponse}
+
+\textbf{Q18. Vérification OCSP.}
+\begin{lstlisting}[style=cmd]
+openssl ocsp \
+  -issuer ssl.com-tls-i-rsa-r1.pem \
+  -cert revoked-rsa-dv.ssl.com.pem \
+  -url http://ocsps.ssl.com \
+  -no_nonce \
+  -resp_text -text
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+OCSP Response Status: successful (0x0)
+Cert Status: revoked
+Revocation Time: Jun  9 14:37:38 2026 GMT
+revoked-rsa-dv.ssl.com.pem: revoked
+\end{lstlisting}
+\begin{reponse}
+La CRL et OCSP concordent : le certificat est bien révoqué.
+\end{reponse}
+
+\textbf{Q19. Numéros de série de \texttt{google.com} et \texttt{youtube.com}.}
+\begin{lstlisting}[style=out]
+google.com  : 139CDF29A8B5BC5212413EEEAFD18CBE
+youtube.com : 139CDF29A8B5BC5212413EEEAFD18CBE
+\end{lstlisting}
+\begin{reponse}
+Les deux hôtes ont présenté le même certificat feuille, émis par
+\texttt{C=US, O=Google Trust Services, CN=WR2}, avec \texttt{CN=*.google.com}. Les SAN
+contiennent à la fois \texttt{DNS:google.com} et \texttt{DNS:youtube.com}. Il s'agit
+donc d'un certificat multi-SAN partagé par l'infrastructure Google.
+\end{reponse}
+
+\textbf{Q20. \texttt{https://wrong.host.badssl.com/}.}
+\begin{lstlisting}[style=out]
+verify error:num=62:hostname mismatch
+Verification error: hostname mismatch
+\end{lstlisting}
+\begin{reponse}
+L'alerte est cohérente : le nom demandé \texttt{wrong.host.badssl.com} ne correspond pas
+au certificat présenté. La validation du nom d'hôte repose sur les SAN, ou à défaut sur
+le CN selon la logique de la RFC 6125. Un wildcard ne couvre qu'un seul niveau de
+sous-domaine.
+\end{reponse}
+
+\textbf{Q21. Certificats racines ISRG.}
+\begin{reponse}
+Non réalisé : aucun fichier \texttt{isrg-1.crt} ou \texttt{isrg-2.crt} n'a été trouvé
+dans l'arborescence de travail. La méthode de lecture reste :
+\begin{lstlisting}[style=cmd]
+for f in isrg-1.crt isrg-2.crt; do
+  openssl x509 -in $f -noout -subject -issuer -dates
+  openssl x509 -in $f -noout -text | grep -E "Public Key Algorithm|Public-Key|Signature Algorithm"
+done
+\end{lstlisting}
+\end{reponse}
+
+\newpage
+% ============================================================
+%                          PARTIE 2
+% ============================================================
+\section{Partie 2 --- Construction d'une PKI multi-autorités}
+
+\subsection{Architecture cible}
+La hiérarchie reproduit (en simplifié) celle de Let's Encrypt avant juin 2024 : deux
+racines indépendantes, l'une RSA, l'autre ECDSA, chacune signant une autorité
+subordonnée, les subordonnées signant les entités finales. Une \emph{certification
+croisée unidirectionnelle} relie les deux branches.
+
+\begin{center}
+\begin{tikzpicture}[
+  font=\footnotesize,
+  rootca/.style={rectangle,rounded corners,draw=accent,fill=accent!10,minimum width=3.1cm,minimum height=0.8cm,align=center},
+  subca/.style={rectangle,rounded corners,draw=repframe,fill=repframe!12,minimum width=3.1cm,minimum height=0.8cm,align=center},
+  ee/.style={rectangle,draw=gray,fill=gray!8,minimum width=1.4cm,minimum height=0.6cm,align=center},
+  sig/.style={-{Stealth[length=2.2mm]},thick,accent},
+  cross/.style={-{Stealth[length=2.2mm]},very thick,phframe,dashed},
+]
+\node[rootca] (rr) at (0,3) {\textbf{RSA\_Root\_CA\_\tri}\\\scriptsize RSA 4096 / 15 ans / pathlen:2};
+\node[rootca] (er) at (7,3) {\textbf{EC\_Root\_CA\_\tri}\\\scriptsize P-384 / 15 ans / pathlen:1};
+\node[subca] (sr) at (0,1.2) {\textbf{Sub\_RSA\_CA\_1\_\tri}\\\scriptsize RSA 3072 / 10 ans / pathlen:0};
+\node[subca] (se) at (7,1.2) {\textbf{Sub\_EC\_CA\_1\_\tri}\\\scriptsize P-384 / 10 ans / pathlen:0};
+\node[ee] (e1) at (-0.9,-0.5) {EE RSA};
+\node[ee] (e2) at (0.9,-0.5) {S/MIME};
+\node[ee] (e3) at (6.1,-0.5) {EE EC};
+\node[ee] (e4) at (7.9,-0.5) {\dots};
+\draw[sig] (rr) -- (sr);
+\draw[sig] (er) -- (se);
+\draw[sig] (sr) -- (e1);
+\draw[sig] (sr) -- (e2);
+\draw[sig] (se) -- (e3);
+\draw[sig] (se) -- (e4);
+\draw[cross] (rr) to[bend left=12] node[midway,above,sloped,phframe]{\scriptsize cross-cert (sens unique)} (se);
+\end{tikzpicture}
+\end{center}
+
+\noindent\textbf{Contraintes de longueur de chemin (\texttt{pathLenConstraint}).} Le
+\emph{pathlen} borne le nombre d'AC intermédiaires pouvant suivre dans le chemin (hors
+entité finale). On applique : racine RSA \texttt{pathlen:2} (deux niveaux de sous-AC
+autorisés), racine EC \texttt{pathlen:1} (un seul niveau), et les deux subordonnées
+\texttt{pathlen:0} (elles ne signent que des entités finales).
+
+
+\subsection{La certification croisée n'est que dans un sens (question du sujet)}
+\begin{reponse}
+\textbf{Ce qu'induit précisément un sens unique.} Une certification croisée consiste à
+faire signer la clé publique d'une racine par l'autre racine, ce qui produit un
+certificat supplémentaire pour la même autorité. Ici, \texttt{RSA\_Root\_CA\_\tri}
+signe un certificat croisé pour \texttt{EC\_Root\_CA\_\tri}. Un vérificateur qui fait
+confiance à la racine RSA peut donc valider une chaîne de la branche EC via ce certificat
+croisé. L'inverse n'est pas vrai sans certificat miroir
+\texttt{RSA\_Root\_CA\_\tri} signé par \texttt{EC\_Root\_CA\_\tri}.
+\end{reponse}
+
+\begin{reponse}
+\textbf{Exemple de chaîne croisée unidirectionnelle :}
+\begin{lstlisting}[style=out]
+RSA_Root_CA_APV
+  -> EC_Root_CA_APV (certificat croise signe par RSA_Root_CA_APV)
+  -> Sub_EC_CA_1_APV
+  -> Leaf_EC_1_APV.crosspath
+\end{lstlisting}
+\textbf{Pour une certification croisée dans les deux sens}, il faudrait émettre un
+second certificat croisé, cette fois avec la racine EC comme émetteur et la clé publique
+de la racine RSA comme sujet :
+\begin{lstlisting}[style=out]
+RSA_Root_CA_APV -> EC_Root_CA_APV
+EC_Root_CA_APV  -> RSA_Root_CA_APV
+\end{lstlisting}
+\end{reponse}
+
+\subsection{Tâche 1 --- Méthodologie de mise en place}
+
+\subsubsection{Arborescence dédiée et fichiers de base de données}
+Chaque AC dispose de son répertoire, avec \fichier{private/} (clé privée, \texttt{chmod
+700}) et \fichier{db/} (base de données OpenSSL). Conformément au sujet, \textbf{quatre
+fichiers doivent exister avant tout appel à \texttt{openssl ca}} : la base
+(\fichier{.db}, vide), ses attributs (\fichier{.db.attr}, vide), le compteur de série
+(\fichier{.srl} $=$ \texttt{01}) et le compteur de CRL (\fichier{.crl.srl} $=$
+\texttt{01}).
+\begin{lstlisting}[style=cmd]
+mkdir -p ca/{certs,crl,newcerts,csr,smime,ocsp}
+for CA in RSA_Root_CA EC_Root_CA Sub_RSA_CA_1 Sub_EC_CA_1; do
+  mkdir -p ca/$CA/db ca/$CA/private
+  chmod 700 ca/$CA/private
+  : > ca/$CA/db/$CA.db            # base vide mais existante
+  : > ca/$CA/db/$CA.db.attr
+  echo 01 > ca/$CA/db/$CA.srl     # numero de serie initial
+  echo 01 > ca/$CA/db/$CA.crl.srl # numero de CRL initial
+done
+\end{lstlisting}
+
+\subsubsection{Fichier de configuration OpenSSL (un par AC)}
+Le c\oe ur du TP réside dans les extensions. Extrait commenté de la configuration de la
+racine RSA (\fichier{RSA\_Root\_CA.conf}) :
+\begin{lstlisting}[style=conf]
+[ca]
+default_ca = root_ca
+
+[root_ca]
+certificate      = $dir/RSA_Root_CA.crt
+private_key      = $dir/private/RSA_Root_CA.key
+database         = $dir/db/RSA_Root_CA.db
+serial           = $dir/db/RSA_Root_CA.srl
+crlnumber        = $dir/db/RSA_Root_CA.crl.srl
+default_md       = sha256          # hachage SHA-256 (ANSSI)
+default_crl_days = 30              # CRL valable 1 mois
+policy           = policy_loose
+
+# --- profil de la racine elle-meme (auto-signature) ---
+[root_ca_ext]
+basicConstraints       = critical,CA:TRUE,pathlen:2   # 2 niveaux de sous-AC
+keyUsage               = critical,keyCertSign,cRLSign
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always
+
+# --- profil applique aux AC subordonnees signees par la racine ---
+[sub_ca_ext]
+basicConstraints       = critical,CA:TRUE,pathlen:0   # ne signe que des EE
+keyUsage               = critical,keyCertSign,cRLSign
+crlDistributionPoints  = URI:http://crl.pki-apv.local/RSA_Root_CA.crl
+authorityInfoAccess    = caIssuers;URI:http://aia.pki-apv.local/RSA_Root_CA.crt
+\end{lstlisting}
+
+\begin{notebox}
+La racine EC utilise le même squelette avec \texttt{pathlen:1}. Le fichier de
+\texttt{Sub\_RSA\_CA\_1} contient en plus les profils d'\emph{entités finales} :
+\texttt{server\_ext} (TLS, \texttt{serverAuth}), \texttt{email\_ext} (S/MIME,
+\texttt{emailProtection} + \texttt{dataEncipherment}) et le profil OCSP. Les quatre
+fichiers \fichier{.conf} complets sont fournis dans l'archive jointe.
+\end{notebox}
+
+\subsubsection{Création de la racine RSA (auto-signée)}
+La requête est créée \emph{et} la bi-clé RSA générée en une commande, puis la racine
+s'auto-signe :
+\begin{lstlisting}[style=cmd]
+# 1) genere la bi-cle RSA 4096 + la CSR
+openssl req -new -config ca/RSA_Root_CA/RSA_Root_CA.conf \
+  -newkey rsa:4096 -keyout ca/RSA_Root_CA/private/RSA_Root_CA.key -nodes \
+  -out ca/csr/RSA_Root_CA.csr
+# 2) auto-signature (15 ans, extensions racine)
+openssl ca -batch -config ca/RSA_Root_CA/RSA_Root_CA.conf -selfsign \
+  -in ca/csr/RSA_Root_CA.csr -extensions root_ca_ext -days 5479 \
+  -out ca/RSA_Root_CA/RSA_Root_CA.crt
+\end{lstlisting}
+Vérification du certificat racine obtenu :
+\begin{lstlisting}[style=out]
+$ openssl x509 -in RSA_Root_CA.crt -noout -subject -issuer -dates
+subject= C = FR, O = TP IMT Mines Ales, OU = PKI APV, CN = RSA Root CA APV
+issuer = C = FR, O = TP IMT Mines Ales, OU = PKI APV, CN = RSA Root CA APV
+notBefore=Jun 23 06:30:04 2026 GMT
+notAfter =Jun 23 06:30:04 2041 GMT          # 15 ans
+    X509v3 Basic Constraints: critical
+        CA:TRUE, pathlen:2
+    X509v3 Key Usage: critical
+        Certificate Sign, CRL Sign
+\end{lstlisting}
+
+\subsubsection{Création de la racine ECDSA (auto-signée)}
+OpenSSL ne génère pas la clé EC implicitement via \texttt{req} : on crée d'abord la clé
+P-384, puis la requête, puis l'auto-signature.
+\begin{lstlisting}[style=cmd]
+# 1) cle EC P-384 (secp384r1)
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:secp384r1 \
+  -out ca/EC_Root_CA/private/EC_Root_CA.key
+# 2) CSR a partir de la cle existante
+openssl req -new -config ca/EC_Root_CA/EC_Root_CA.conf \
+  -key ca/EC_Root_CA/private/EC_Root_CA.key -out ca/csr/EC_Root_CA.csr
+# 3) auto-signature (15 ans, pathlen:1)
+openssl ca -batch -config ca/EC_Root_CA/EC_Root_CA.conf -selfsign \
+  -in ca/csr/EC_Root_CA.csr -extensions root_ca_ext -days 5479 \
+  -out ca/EC_Root_CA/EC_Root_CA.crt
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+$ openssl x509 -in EC_Root_CA.crt -noout -text | grep -E "Algorithm|NIST|pathlen|Sign"
+        Signature Algorithm: ecdsa-with-SHA256
+                ASN1 OID: secp384r1
+                NIST CURVE: P-384
+            CA:TRUE, pathlen:1
+            Certificate Sign, CRL Sign
+\end{lstlisting}
+
+\subsubsection{Création des autorités subordonnées}
+Chaque sous-AC génère sa clé et sa CSR, puis est signée par sa racine avec le profil
+\texttt{sub\_ca\_ext} (10 ans). Exemple pour la branche RSA :
+\begin{lstlisting}[style=cmd]
+openssl req -new -config ca/Sub_RSA_CA_1/Sub_RSA_CA_1.conf \
+  -newkey rsa:3072 -keyout ca/Sub_RSA_CA_1/private/Sub_RSA_CA_1.key -nodes \
+  -out ca/csr/Sub_RSA_CA_1.csr
+# signature par la racine RSA
+openssl ca -batch -config ca/RSA_Root_CA/RSA_Root_CA.conf \
+  -extensions sub_ca_ext -days 3653 \
+  -in ca/csr/Sub_RSA_CA_1.csr -out ca/Sub_RSA_CA_1/Sub_RSA_CA_1.crt
+\end{lstlisting}
+Validation des deux chaînes de subordination :
+\begin{lstlisting}[style=out]
+$ openssl verify -CAfile RSA_Root_CA.crt Sub_RSA_CA_1.crt
+Sub_RSA_CA_1.crt: OK
+$ openssl verify -CAfile EC_Root_CA.crt  Sub_EC_CA_1.crt
+Sub_EC_CA_1.crt: OK
+\end{lstlisting}
+
+\newpage
+
+\subsection{Révocation par CRL (tâches 2 à 4)}
+
+\textbf{Tâche 2 --- émettre une entité finale par \texttt{Sub\_RSA\_CA\_1\_\tri}.}
+Le certificat généré se trouve dans le dossier \fichier{03-crl-ocsp} :
+\fichier{Sub\_RSA\_CA\_1\_\tri-leaf-crl.crt}.
+\begin{lstlisting}[style=cmd]
+cd /home/aurelien/Documents/certificats/03-crl-ocsp
+openssl ca -batch \
+  -config openssl-rsa-sub-ocsp.cnf \
+  -extensions v3_leaf \
+  -days 365 \
+  -notext \
+  -in Sub_RSA_CA_1_APV-leaf-crl.csr.pem \
+  -out Sub_RSA_CA_1_APV-leaf-crl.crt
+\end{lstlisting}
+
+\textbf{Tâche 3 --- valider face à la chaîne d'autorité.}
+\begin{lstlisting}[style=cmd]
+openssl verify \
+  -CAfile /home/aurelien/Documents/certificats/02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
+  -untrusted /home/aurelien/Documents/certificats/02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  Sub_RSA_CA_1_APV-leaf-crl.crt
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+/home/aurelien/Documents/certificats/03-crl-ocsp/Sub_RSA_CA_1_APV-leaf-crl.crt: OK
+\end{lstlisting}
+
+\textbf{Tâche 4 --- révoquer puis générer et afficher la CRL.}
+\begin{lstlisting}[style=cmd]
+openssl ca -batch -config openssl-rsa-sub-ocsp.cnf \
+  -revoke Sub_RSA_CA_1_APV-leaf-crl.crt \
+  -crl_reason keyCompromise
+openssl ca -config openssl-rsa-sub-ocsp.cnf \
+  -gencrl -crldays 30 \
+  -out ca-work/Sub_RSA_CA_1_APV/crl.pem
+openssl crl -in ca-work/Sub_RSA_CA_1_APV/crl.pem -text -noout > crl-after-revoke.txt
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_APV
+Last Update: Jun 23 07:18:21 2026 GMT
+Next Update: Jul 23 07:18:21 2026 GMT
+Serial Number: 1000
+Revocation Date: Jun 23 07:18:21 2026 GMT
+X509v3 CRL Reason Code: Key Compromise
+\end{lstlisting}
+Le certificat apparaît bien dans la CRL, avec le motif \emph{Key Compromise}.
+
+
+\subsection{Signature et chiffrement S/MIME (tâches 5 à 7)}
+
+\textbf{Tâche 5 --- certificat S/MIME avec les bons usages.}
+Le certificat \fichier{04-smime/smime-user.crt} est émis par
+\texttt{Sub\_RSA\_CA\_1\_\tri}. Les extensions observées sont :
+\begin{itemize}[leftmargin=1.4em]
+  \item \texttt{Basic Constraints: CA:FALSE} ;
+  \item \texttt{Key Usage: Digital Signature, Key Encipherment} ;
+  \item \texttt{Extended Key Usage: E-mail Protection} ;
+  \item SAN email : \texttt{smime-user@apv.local}.
+\end{itemize}
+\begin{lstlisting}[style=cmd]
+cd /home/aurelien/Documents/certificats/04-smime
+openssl ca -batch \
+  -config ../02-pki-openssl/Sub_RSA_CA_1_APV/openssl-rsa-sub.cnf \
+  -extfile smime-openssl.cnf \
+  -extensions v3_smime_signer \
+  -days 365 \
+  -notext \
+  -in smime-user.csr.pem \
+  -out smime-user.crt
+\end{lstlisting}
+
+\textbf{Tâches 6 et 7 --- signature, chiffrement, déchiffrement et vérification.}
+L'échange réel avec un autre groupe reste à compléter. Une démonstration locale a été
+réalisée avec un certificat destinataire de test : \fichier{recipient-test.crt}.
+\begin{lstlisting}[style=cmd]
+openssl smime -sign -binary -nodetach \
+  -in message.txt \
+  -signer smime-user.crt \
+  -inkey smime-user.key.pem \
+  -certfile ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+| openssl smime -encrypt -aes256 \
+  -out signed-encrypted-message.pem \
+  recipient-test.crt
+
+openssl smime -decrypt \
+  -in signed-encrypted-message.pem \
+  -recip recipient-test.crt \
+  -inkey recipient-test.key.pem \
+  -out decrypted-signed-message.pem
+
+openssl smime -verify \
+  -in decrypted-signed-message.pem \
+  -CAfile ../02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
+  -out verified-message.txt
+\end{lstlisting}
+\begin{reponse}
+Le fichier \fichier{verified-message.txt} contient le message clair attendu. La
+démonstration locale signature + chiffrement + déchiffrement + vérification est donc
+réalisée. L'échange inter-groupe reste à compléter.
+\end{reponse}
+
+\begin{notebox}
+Bonne pratique rappelée par le sujet : il faudrait idéalement générer deux certificats,
+un pour la signature et un pour le chiffrement. Le TP regroupe volontairement les deux
+usages dans un seul certificat pour simplifier la manipulation.
+\end{notebox}
+
+
+\subsection{Révocation par OCSP (tâches 8 à 12)}
+
+\textbf{Tâche 8 --- certificat contenant URL CRL et URL OCSP.}
+Le certificat testé se trouve dans le dossier \fichier{03-crl-ocsp} :
+\fichier{Sub\_RSA\_CA\_1\_\tri-leaf-ocsp.crt}.
+\begin{lstlisting}[style=out]
+CRL Distribution Points:
+  URI:http://crl.localhost:2560/Sub_RSA_CA_1_APV.crl
+Authority Information Access:
+  OCSP - URI:http://ocsp.localhost:2560
+\end{lstlisting}
+
+\textbf{Tâche 9 --- répondeur OCSP pour \texttt{Sub\_RSA\_CA\_1\_\tri}.}
+Le répondeur local est lancé sur \texttt{127.0.0.1:2560}.
+\begin{lstlisting}[style=cmd]
+openssl ocsp \
+  -index ca-work/Sub_RSA_CA_1_APV/db/index.txt \
+  -port 2560 \
+  -rsigner ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  -rkey ../02-pki-openssl/Sub_RSA_CA_1_APV/private/Sub_RSA_CA_1_APV.key.pem \
+  -CA ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  -nrequest 1
+\end{lstlisting}
+
+\textbf{Tâche 10 --- vérifier : statut attendu \emph{good}.}
+\begin{lstlisting}[style=cmd]
+openssl ocsp \
+  -issuer ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  -cert Sub_RSA_CA_1_APV-leaf-ocsp.crt \
+  -url http://127.0.0.1:2560 \
+  -CAfile ../02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
+  -verify_other ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  -resp_text -text -no_nonce
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+Cert Status: good
+Response verify OK
+Sub_RSA_CA_1_APV-leaf-ocsp.crt: good
+\end{lstlisting}
+
+\textbf{Tâches 11 et 12 --- révoquer puis re-vérifier : statut attendu \emph{revoked}.}
+\begin{lstlisting}[style=cmd]
+openssl ca -batch -config openssl-rsa-sub-ocsp.cnf \
+  -revoke Sub_RSA_CA_1_APV-leaf-ocsp.crt \
+  -crl_reason cessationOfOperation
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+Cert Status: revoked
+Revocation Time: Jun 23 07:18:22 2026 GMT
+Response verify OK
+Sub_RSA_CA_1_APV-leaf-ocsp.crt: revoked
+\end{lstlisting}
+Le statut passe bien de \texttt{good} à \texttt{revoked}.
+
+
+\subsection{Certification croisée (tâches 13 et 14)}
+\label{sec:cross}
+
+\textbf{Tâche 13 --- entité finale émise par \texttt{Sub\_EC\_CA\_1\_\tri}.}
+Le certificat final émis pour tester les chemins est
+\fichier{05-cross-cert/certs/Leaf\_EC\_1\_\tri.crosspath.crt}.
+
+\textbf{Mise en place du pont croisé.} La racine \texttt{RSA\_Root\_CA\_\tri} signe un
+certificat croisé pour \texttt{EC\_Root\_CA\_\tri}. On obtient ainsi un second
+certificat pour la racine EC, mais émis par la racine RSA :
+\begin{lstlisting}[style=out]
+05-cross-cert/certs/EC_Root_CA_APV.cross-signed-by-RSA_Root_CA_APV.crt
+\end{lstlisting}
+
+\textbf{Tâche 14 --- vérifier les deux chaînes possibles.}
+\begin{lstlisting}[style=cmd]
+# Chaine native : Leaf_EC -> Sub_EC_CA_1 -> EC_Root_CA
+openssl verify -show_chain \
+  -CAfile /home/aurelien/Documents/certificats/02-pki-openssl/EC_Root_CA_APV/certs/EC_Root_CA_APV.crt \
+  -untrusted /home/aurelien/Documents/certificats/02-pki-openssl/Sub_EC_CA_1_APV/certs/Sub_EC_CA_1_APV.crt \
+  /home/aurelien/Documents/certificats/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt
+
+# Chaine croisee : Leaf_EC -> Sub_EC_CA_1 -> EC_Root_CA cross-signee -> RSA_Root_CA
+openssl verify -show_chain \
+  -CAfile /home/aurelien/Documents/certificats/02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
+  -untrusted /home/aurelien/Documents/certificats/05-cross-cert/certs/untrusted-rsa-path.pem \
+  /home/aurelien/Documents/certificats/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+/home/aurelien/Documents/certificats/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt: OK
+depth=0: CN=Leaf_EC_1_APV
+depth=1: CN=Sub_EC_CA_1_APV
+depth=2: CN=EC_Root_CA_APV
+
+/home/aurelien/Documents/certificats/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt: OK
+depth=0: CN=Leaf_EC_1_APV
+depth=1: CN=Sub_EC_CA_1_APV
+depth=2: CN=EC_Root_CA_APV
+depth=3: CN=RSA_Root_CA_APV
+\end{lstlisting}
+
+\begin{notebox}
+La certification croisée réalisée ici est \textbf{unidirectionnelle}. Pour une croisée
+bidirectionnelle, il faudrait émettre le certificat miroir
+\texttt{RSA\_Root\_CA\_\tri.cross-signed-by-EC\_Root\_CA\_\tri.crt}.
+\end{notebox}
+
+
+\subsection{Magasin de certificats Windows (tâche 15)}
+Cette partie n'a pas été exécutée sur Windows dans l'environnement Linux. Une procédure a
+été préparée pour la VM Windows Server.
+
+\begin{placeholder}
+\textbf{Certificats à exporter/importer :}
+\begin{itemize}[leftmargin=1.4em]
+  \item racine : \fichier{RSA\_Root\_CA\_\tri.crt} ou \fichier{HSM\_Root\_CA\_\tri.crt}
+  selon la chaîne testée ;
+  \item intermédiaire : \fichier{Sub\_RSA\_CA\_1\_\tri.crt} ou l'AC ADCS subordonnée une
+  fois émise.
+\end{itemize}
+\textbf{Magasins Windows visés :}
+\begin{itemize}[leftmargin=1.4em]
+  \item racine : \texttt{Autorités de certification racines de confiance} /
+  \texttt{Cert:\\LocalMachine\\Root} ;
+  \item intermédiaire : \texttt{Autorités de certification intermédiaires} /
+  \texttt{Cert:\\LocalMachine\\CA}.
+\end{itemize}
+\begin{lstlisting}[style=cmd]
+Import-Certificate -FilePath C:\PKI\HSM_Root_CA_APV.cer -CertStoreLocation Cert:\LocalMachine\Root
+Import-Certificate -FilePath C:\PKI\HSM_Sub_CA_APV.cer  -CertStoreLocation Cert:\LocalMachine\CA
+\end{lstlisting}
+Validation attendue : ouverture du certificat dans Windows et vérification de l'onglet
+\texttt{Chemin d'accès de certification}. Captures à compléter : magasin racine, magasin
+intermédiaire et chaîne validée.
+\end{placeholder}
+
+\newpage
+
+% ============================================================
+%                          PARTIE 3
+% ============================================================
+\section{Partie 3 --- SoftHSM2 et ADCS}
+
+\subsection{Autorité racine Linux avec SoftHSM2}
+Le travail réalisé sous Linux couvre : configuration locale de SoftHSM2, initialisation
+d'un token dédié, génération d'une clé RSA 4096 bits dans le token, émission d'un
+certificat racine autosigné, génération d'une CRL/ARL valable environ un mois,
+utilisation d'OpenSSL via PKCS\#11 et vérification de l'absence de fichier de clé privée
+exporté hors SoftHSM2.
+
+\begin{lstlisting}[style=cmd]
+cd /home/aurelien/Documents/certificats/06-softhsm
+./scripts/bootstrap-hsm-root-ca.sh
+\end{lstlisting}
+
+\begin{lstlisting}[style=out]
+Subject: C=FR, O=TP Crypto, OU=06-softhsm, CN=HSM_Root_CA_APV
+Issuer:  C=FR, O=TP Crypto, OU=06-softhsm, CN=HSM_Root_CA_APV
+Cle: RSA 4096 bits
+Validite: Jun 23 07:17:04 2026 GMT -> Jun 20 07:17:04 2036 GMT
+Extensions: CA:TRUE, pathlen:1, Certificate Sign, CRL Sign
+\end{lstlisting}
+
+\subsection{CRL / ARL de la racine HSM}
+\begin{lstlisting}[style=out]
+Issuer: C=FR, O=TP Crypto, OU=06-softhsm, CN=HSM_Root_CA_APV
+Last Update: Jun 23 07:17:04 2026 GMT
+Next Update: Jul 23 07:17:04 2026 GMT
+No Revoked Certificates.
+\end{lstlisting}
+
+\subsection{Absence d'export de clé privée}
+\begin{lstlisting}[style=cmd]
+sh scripts/verify-no-private-files.sh
+\end{lstlisting}
+\begin{lstlisting}[style=out]
+No private key file (.key or private .pem) found outside SoftHSM2.
+\end{lstlisting}
+\begin{notebox}
+Aucun PIN, mot de passe, secret de token ou contenu de clé privée n'est inclus dans ce
+compte rendu. Les commandes qui nécessitent un PIN doivent utiliser une variable
+d'environnement locale ou une saisie interactive, jamais une valeur en clair dans le
+rapport.
+\end{notebox}
+
+\subsection{Point technique PKCS\#11}
+La tentative avec le provider \texttt{pkcs11} a échoué car le module attendu n'existait
+pas sous ce nom. La solution utilisée est le provider OpenSSL 3 \texttt{pkcs11prov}, avec
+le module SoftHSM2 configuré.
+
+\subsection{Autorité subordonnée ADCS Windows}
+Cette partie est à réaliser sur Windows Server 2019. Le dossier
+\fichier{07-windows-handoff/README.md} contient une procédure de préparation, mais pas de
+preuve d'exécution.
+
+\begin{placeholder}
+\textbf{Procédure attendue :}
+\begin{enumerate}[leftmargin=1.5em]
+  \item Installer ADCS en mode \emph{Standalone CA} :
+\begin{lstlisting}[style=cmd]
+Install-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
+\end{lstlisting}
+  \item Créer une AC subordonnée autonome avec clé RSA 4096 bits, SHA-256 et validité 5 ans :
+\begin{lstlisting}[style=cmd]
+Install-AdcsCertificationAuthority `
+  -CAType StandaloneSubordinateCA `
+  -CACommonName "HSM_Sub_CA_APV" `
+  -KeyLength 4096 `
+  -HashAlgorithmName SHA256 `
+  -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
+  -OutputCertRequestFile C:\PKI\HSM_Sub_CA_APV.req `
+  -ValidityPeriod Years `
+  -ValidityPeriodUnits 5
+\end{lstlisting}
+  \item Transférer la CSR PKCS\#10 vers Linux et la signer avec la racine OpenSSL/SoftHSM2 :
+\begin{lstlisting}[style=cmd]
+cd /home/aurelien/Documents/certificats/06-softhsm
+./scripts/sign-adcs-csr.sh HSM_Sub_CA_APV.req issued/HSM_Sub_CA_APV.crt
+\end{lstlisting}
+  \item Renvoyer le certificat signé sur Windows et finaliser ADCS :
+\begin{lstlisting}[style=cmd]
+certreq -accept C:\PKI\HSM_Sub_CA_APV.cer
+\end{lstlisting}
+  \item Générer une requête TLS avec \texttt{certreq}, puis la soumettre à l'AC ADCS :
+\begin{lstlisting}[style=cmd]
+certreq -new C:\PKI\tls.inf C:\PKI\tls.req
+certutil -config "NomServeur\HSM_Sub_CA_APV" -submit C:\PKI\tls.req C:\PKI\tls.cer
+\end{lstlisting}
+\end{enumerate}
+Captures nécessaires : rôle ADCS installé, AC subordonnée configurée, certificat racine
+importé, certificat subordonné valide, certificat TLS émis et chaîne visible dans Windows.
+\end{placeholder}
+
+\newpage
+% ============================================================
+%                       CONCLUSION
+% ============================================================
+
+\section{Conclusion}
+Sous Linux, le TP a permis d'analyser des certificats publics, de vérifier CRL et OCSP,
+de construire une PKI OpenSSL, de révoquer des certificats, de réaliser une démonstration
+S/MIME locale, de tester une certification croisée et de créer une racine protégée par
+SoftHSM2.
+
+\noindent\textbf{Réalisé et vérifié :}
+\begin{itemize}[leftmargin=1.4em]
+  \item analyse du certificat \texttt{cyber.gouv.fr}, de sa chaîne GandiCert / DigiCert,
+  de sa CRL et de son statut de révocation ;
+  \item vérification CRL et OCSP d'un certificat révoqué SSL.com ;
+  \item comparaison des certificats \texttt{google.com} et \texttt{youtube.com} ;
+  \item création des AC RSA et EC OpenSSL, puis vérification des chaînes ;
+  \item révocation CRL locale et répondeur OCSP local avec passage de \texttt{good} à
+  \texttt{revoked} ;
+  \item démonstration S/MIME locale ;
+  \item certification croisée unidirectionnelle et vérification des deux chemins pour le
+  certificat EC final ;
+  \item racine Linux SoftHSM2 et CRL/ARL valable environ un mois.
+\end{itemize}
+
+\noindent\textbf{À compléter :}
+\begin{itemize}[leftmargin=1.4em]
+  \item captures navigateur de \texttt{revoked-rsa-dv.ssl.com} ;
+  \item capture navigateur de \texttt{wrong.host.badssl.com} ;
+  \item analyse de \texttt{isrg-1.crt} et \texttt{isrg-2.crt} si les fichiers sont fournis ;
+  \item échange S/MIME réel avec un autre groupe ;
+  \item import et validation dans le magasin Windows ;
+  \item AC subordonnée ADCS Windows Server 2019 et certificat TLS émis par ADCS.
+\end{itemize}
+
+\appendix
+
+
+\section{Annexe --- Arborescence des fichiers produits}
+\begin{lstlisting}[style=out]
+/home/aurelien/Documents/certificats/
+|-- 01-public-certs/
+|   |-- cyber.gouv.fr.pem, cyber.gouv.fr.chain.txt, cyber.gouv.fr.x509.txt
+|   |-- GandiCert.crl, crl.txt
+|   |-- revoked-rsa-dv.ssl.com.pem, revoked-rsa-dv.ssl.com.crl.txt, revoked-rsa-dv.ssl.com.ocsp.txt
+|   |-- google.com.pem, youtube.com.pem, wrong.host.badssl.com.openssl.txt
+|-- 02-pki-openssl/
+|   |-- RSA_Root_CA_APV/      (certs/RSA_Root_CA_APV.crt, db/, private/, openssl-rsa-root.cnf)
+|   |-- Sub_RSA_CA_1_APV/     (certs/Sub_RSA_CA_1_APV.crt, certs/Leaf_RSA_1_APV.crt)
+|   |-- EC_Root_CA_APV/       (certs/EC_Root_CA_APV.crt, openssl-ec-root.cnf)
+|   |-- Sub_EC_CA_1_APV/      (certs/Sub_EC_CA_1_APV.crt, certs/Leaf_EC_1_APV.crt)
+|-- 03-crl-ocsp/
+|   |-- Sub_RSA_CA_1_APV-leaf-crl.crt, Sub_RSA_CA_1_APV-leaf-ocsp.crt
+|   |-- verify-before-revoke.txt, crl-after-revoke.txt, ocsp-good.txt, ocsp-revoked.txt
+|-- 04-smime/
+|   |-- smime-user.csr.pem, smime-user.crt, recipient-test.crt
+|   |-- signed-encrypted-message.pem, decrypted-signed-message.pem, verified-message.txt
+|-- 05-cross-cert/
+|   |-- certs/EC_Root_CA_APV.cross-signed-by-RSA_Root_CA_APV.crt
+|   |-- certs/Leaf_EC_1_APV.crosspath.crt, certs/untrusted-rsa-path.pem
+|   |-- verify/verify-ec-self.txt, verify/verify-rsa-cross.txt
+|-- 06-softhsm/
+|   |-- softhsm2.conf, openssl-hsm-root.cnf
+|   |-- state/certs/HSM_Root_CA_APV.crt, state/crl/HSM_Root_CA_APV.crl
+|   |-- scripts/bootstrap-hsm-root-ca.sh, sign-adcs-csr.sh, verify-no-private-files.sh
+|-- 07-windows-handoff/
+|   |-- README.md
+\end{lstlisting}
+
+\section{Annexe --- Captures restantes à insérer}
+\begin{itemize}[leftmargin=1.4em]
+  \item Navigateurs sur \texttt{revoked-rsa-dv.ssl.com} : Firefox, Chromium, troisième navigateur.
+  \item Navigateur sur \texttt{wrong.host.badssl.com}.
+  \item Magasin de certificats Windows.
+  \item Installation et configuration ADCS.
+  \item Certificat TLS Windows.
+  \item Échange S/MIME réel avec un autre groupe.
+\end{itemize}
+
+\begin{notebox}
+Le trigramme utilisé dans ce compte rendu est \tri{}. Les chemins de fichiers ont été
+adaptés à la machine : \fichier{/home/aurelien/Documents/certificats}.
+\end{notebox}
+
+\end{document}
