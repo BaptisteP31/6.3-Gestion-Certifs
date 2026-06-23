@@ -346,21 +346,62 @@ function Verify-WebCertificate {
 
 function Export-Evidence {
     $reportPath = Join-Path $WorkDir 'RAPPORT-WINDOWS-ADCS.md'
-    $files = @($RootCACertPath,$SubCACertSignedPath,$SubCARequestPath,$WebCertRequestPath,$WebCertPath,(Join-Path $WorkDir 'README-ACTIONS-MANUELLES.txt'),(Join-Path $LogRoot 'root-store.txt'),(Join-Path $LogRoot 'certsvc-status.txt'),(Join-Path $LogRoot 'web-cert-dump.txt'),(Join-Path $LogRoot 'web-cert-verify.txt'),$script:TranscriptPath) | Where-Object { $_ -and (Test-Path $_) }
-    $statusLines = @(
-        '# Rapport Windows ADCS','', '## Etat d''avancement',
-        "- Sous-CA prepare: $(if (Test-Path $SubCARequestPath) { 'oui' } else { 'non' })",
-        "- Certificat racine importe: $(if (Test-Path $RootCACertPath) { 'fichier present' } else { 'a importer' })",
-        "- Sous-CA finalisee: $(if ($script:CAReady) { 'oui' } else { 'non' })",
-        "- Certificat web emis: $(if ($script:WebCertIssued) { 'oui' } else { 'non' })",
-        '', '## Commandes executees'
-    )
-    foreach ($cmd in $script:ExecutedCommands) { $statusLines += "- `$cmd`" }
-    $statusLines += ''; $statusLines += '## Fichiers produits'
-    foreach ($f in $files) { $statusLines += "- [$([IO.Path]::GetFileName($f))]($f)" }
-    $statusLines += ''; $statusLines += '## Captures d''ecran a faire'; $statusLines += '- Lancement du script en administrateur.'; $statusLines += '- Presence de la CSR du sous-CA.'; $statusLines += '- Import du certificat racine dans Root.'; $statusLines += '- Etat du service CertSvc.'; $statusLines += '- Dump et verification du certificat TLS.'
-    $statusLines += ''; $statusLines += '## Points a completer cote Linux'; $statusLines += '- Signer la CSR du sous-CA Windows avec l''AC racine OpenSSL/SoftHSM2.'; $statusLines += "- Copier le certificat signe dans: $SubCACertSignedPath"; $statusLines += "- Copier le certificat racine dans: $RootCACertPath"
-    $statusLines += ''; $statusLines += '## Preuves certutil importantes'; $statusLines += "- `certutil -store Root`"; $statusLines += "- `certutil -dump $WebCertPath`"; $statusLines += "- `certutil -verify $WebCertPath`"
+    $files = @(
+        $RootCACertPath,
+        $SubCACertSignedPath,
+        $SubCARequestPath,
+        $WebCertRequestPath,
+        $WebCertPath,
+        (Join-Path $WorkDir 'README-ACTIONS-MANUELLES.txt'),
+        (Join-Path $LogRoot 'root-store.txt'),
+        (Join-Path $LogRoot 'certsvc-status.txt'),
+        (Join-Path $LogRoot 'web-cert-dump.txt'),
+        (Join-Path $LogRoot 'web-cert-verify.txt'),
+        $script:TranscriptPath
+    ) | Where-Object { $_ -and (Test-Path $_) }
+
+    $statusLines = New-Object System.Collections.Generic.List[string]
+
+    [void]$statusLines.Add('# Rapport Windows ADCS')
+    [void]$statusLines.Add('')
+    [void]$statusLines.Add("## Etat d'avancement")
+    [void]$statusLines.Add("- Sous-CA prepare: $(if (Test-Path $SubCARequestPath) { 'oui' } else { 'non' })")
+    [void]$statusLines.Add("- Certificat racine importe: $(if (Test-Path $RootCACertPath) { 'fichier present' } else { 'a importer' })")
+    [void]$statusLines.Add("- Sous-CA finalisee: $(if ($script:CAReady) { 'oui' } else { 'non' })")
+    [void]$statusLines.Add("- Certificat web emis: $(if ($script:WebCertIssued) { 'oui' } else { 'non' })")
+
+    [void]$statusLines.Add('')
+    [void]$statusLines.Add('## Commandes executees')
+    foreach ($cmd in $script:ExecutedCommands) {
+        [void]$statusLines.Add(('- ' + $cmd))
+    }
+
+    [void]$statusLines.Add('')
+    [void]$statusLines.Add('## Fichiers produits')
+    foreach ($f in $files) {
+        [void]$statusLines.Add(('- ' + [IO.Path]::GetFileName($f) + ' : ' + $f))
+    }
+
+    [void]$statusLines.Add('')
+    [void]$statusLines.Add("## Captures d'ecran a faire")
+    [void]$statusLines.Add('- Lancement du script en administrateur.')
+    [void]$statusLines.Add('- Presence de la CSR du sous-CA.')
+    [void]$statusLines.Add('- Import du certificat racine dans Root.')
+    [void]$statusLines.Add('- Etat du service CertSvc.')
+    [void]$statusLines.Add('- Dump et verification du certificat TLS.')
+
+    [void]$statusLines.Add('')
+    [void]$statusLines.Add('## Points a completer cote Linux')
+    [void]$statusLines.Add("- Signer la CSR du sous-CA Windows avec l'AC racine OpenSSL/SoftHSM2.")
+    [void]$statusLines.Add("- Copier le certificat signe dans: $SubCACertSignedPath")
+    [void]$statusLines.Add("- Copier le certificat racine dans: $RootCACertPath")
+
+    [void]$statusLines.Add('')
+    [void]$statusLines.Add('## Preuves certutil importantes')
+    [void]$statusLines.Add('certutil -store Root')
+    [void]$statusLines.Add("certutil -dump $WebCertPath")
+    [void]$statusLines.Add("certutil -verify $WebCertPath")
+
     Set-Content -Path $reportPath -Value ($statusLines -join [Environment]::NewLine) -Encoding UTF8
 }
 
