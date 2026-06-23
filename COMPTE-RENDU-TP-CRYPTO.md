@@ -283,18 +283,18 @@ Commande de génération :
 
 | Autorité | Algorithme | Taille/courbe | Validité | Extensions importantes | Fichier associé | Vérification |
 |---|---:|---:|---|---|---|---|
-| `RSA_Root_CA_BPA` | RSA / SHA-256 | 4096 bits | 2026-06-23 à 2041-06-19 | `CA:TRUE`, `Certificate Sign`, `CRL Sign` | `RSA_Root_CA_BPA/openssl-rsa-root.cnf` | `OK` |
-| `Sub_RSA_CA_1_BPA` | RSA / SHA-256 | 3072 bits | 2026-06-23 à 2036-06-20 | `CA:TRUE, pathlen:0`, `Certificate Sign`, `CRL Sign` | `Sub_RSA_CA_1_BPA/openssl-rsa-sub.cnf` | `OK` |
-| `EC_Root_CA_BPA` | ECDSA / SHA-256 | P-384 | 2026-06-23 à 2041-06-19 | `CA:TRUE`, `Certificate Sign`, `CRL Sign` | `EC_Root_CA_BPA/openssl-ec-root.cnf` | `OK` |
-| `Sub_EC_CA_1_BPA` | ECDSA / SHA-256 | P-384 | 2026-06-23 à 2036-06-20 | `CA:TRUE, pathlen:0`, `Certificate Sign`, `CRL Sign` | `Sub_EC_CA_1_BPA/openssl-ec-sub.cnf` | `OK` |
+| `RSA_Root_CA_APV` | RSA / SHA-256 | 4096 bits | 2026-06-23 à 2041-06-19 | `CA:TRUE`, `Certificate Sign`, `CRL Sign` | `RSA_Root_CA_APV/openssl-rsa-root.cnf` | `OK` |
+| `Sub_RSA_CA_1_APV` | RSA / SHA-256 | 3072 bits | 2026-06-23 à 2036-06-20 | `CA:TRUE, pathlen:0`, `Certificate Sign`, `CRL Sign` | `Sub_RSA_CA_1_APV/openssl-rsa-sub.cnf` | `OK` |
+| `EC_Root_CA_APV` | ECDSA / SHA-256 | P-384 | 2026-06-23 à 2041-06-19 | `CA:TRUE`, `Certificate Sign`, `CRL Sign` | `EC_Root_CA_APV/openssl-ec-root.cnf` | `OK` |
+| `Sub_EC_CA_1_APV` | ECDSA / SHA-256 | P-384 | 2026-06-23 à 2036-06-20 | `CA:TRUE, pathlen:0`, `Certificate Sign`, `CRL Sign` | `Sub_EC_CA_1_APV/openssl-ec-sub.cnf` | `OK` |
 
 Commandes de vérification représentatives :
 
 ```bash
-openssl verify -CAfile RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt
-openssl verify -CAfile RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt
-openssl verify -CAfile RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt -untrusted Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt Sub_RSA_CA_1_BPA/certs/Leaf_RSA_1_BPA.crt
-openssl verify -CAfile EC_Root_CA_BPA/certs/EC_Root_CA_BPA.crt -untrusted Sub_EC_CA_1_BPA/certs/Sub_EC_CA_1_BPA.crt Sub_EC_CA_1_BPA/certs/Leaf_EC_1_BPA.crt
+openssl verify -CAfile RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt
+openssl verify -CAfile RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt
+openssl verify -CAfile RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt -untrusted Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt Sub_RSA_CA_1_APV/certs/Leaf_RSA_1_APV.crt
+openssl verify -CAfile EC_Root_CA_APV/certs/EC_Root_CA_APV.crt -untrusted Sub_EC_CA_1_APV/certs/Sub_EC_CA_1_APV.crt Sub_EC_CA_1_APV/certs/Leaf_EC_1_APV.crt
 ```
 
 Résultats observés : tous `OK`.
@@ -303,20 +303,20 @@ Extrait d’arborescence utile :
 
 ```text
 02-pki-openssl/
-  RSA_Root_CA_BPA/
-    certs/RSA_Root_CA_BPA.crt
+  RSA_Root_CA_APV/
+    certs/RSA_Root_CA_APV.crt
     db/index.txt
     openssl-rsa-root.cnf
-  Sub_RSA_CA_1_BPA/
-    certs/Sub_RSA_CA_1_BPA.crt
-    certs/Leaf_RSA_1_BPA.crt
+  Sub_RSA_CA_1_APV/
+    certs/Sub_RSA_CA_1_APV.crt
+    certs/Leaf_RSA_1_APV.crt
     openssl-rsa-sub.cnf
-  EC_Root_CA_BPA/
-    certs/EC_Root_CA_BPA.crt
+  EC_Root_CA_APV/
+    certs/EC_Root_CA_APV.crt
     openssl-ec-root.cnf
-  Sub_EC_CA_1_BPA/
-    certs/Sub_EC_CA_1_BPA.crt
-    certs/Leaf_EC_1_BPA.crt
+  Sub_EC_CA_1_APV/
+    certs/Sub_EC_CA_1_APV.crt
+    certs/Leaf_EC_1_APV.crt
     openssl-ec-sub.cnf
 ```
 
@@ -326,9 +326,9 @@ Les clés privées existent dans les répertoires `private/`, mais elles ne sont
 
 Sources : `03-crl-ocsp/README.md`, `verify-before-revoke.txt`, `crl-after-revoke.txt`, `openssl-rsa-sub-ocsp.cnf`.
 
-### 2. Émission d’un certificat final par `Sub_RSA_CA_1_BPA`
+### 2. Émission d’un certificat final par `Sub_RSA_CA_1_APV`
 
-Certificat généré : `03-crl-ocsp/Sub_RSA_CA_1_BPA-leaf-crl.crt`.
+Certificat généré : `03-crl-ocsp/Sub_RSA_CA_1_APV-leaf-crl.crt`.
 
 Commande :
 
@@ -338,8 +338,8 @@ openssl ca -batch \
   -extensions v3_leaf \
   -days 365 \
   -notext \
-  -in Sub_RSA_CA_1_BPA-leaf-crl.csr.pem \
-  -out Sub_RSA_CA_1_BPA-leaf-crl.crt
+  -in Sub_RSA_CA_1_APV-leaf-crl.csr.pem \
+  -out Sub_RSA_CA_1_APV-leaf-crl.crt
 ```
 
 ### 3. Validation du certificat face à la chaîne d’autorité
@@ -348,15 +348,15 @@ Commande :
 
 ```bash
 openssl verify \
-  -CAfile ../02-pki-openssl/RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt \
-  -untrusted ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt \
-  Sub_RSA_CA_1_BPA-leaf-crl.crt
+  -CAfile ../02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
+  -untrusted ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  Sub_RSA_CA_1_APV-leaf-crl.crt
 ```
 
 Résultat dans `verify-before-revoke.txt` :
 
 ```text
-/home/baptiste/tp-crypto-agents/03-crl-ocsp/Sub_RSA_CA_1_BPA-leaf-crl.crt: OK
+/home/baptiste/tp-crypto-agents/03-crl-ocsp/Sub_RSA_CA_1_APV-leaf-crl.crt: OK
 ```
 
 ### 4. Révocation du certificat et émission de la CRL
@@ -365,20 +365,20 @@ Commandes :
 
 ```bash
 openssl ca -batch -config openssl-rsa-sub-ocsp.cnf \
-  -revoke Sub_RSA_CA_1_BPA-leaf-crl.crt \
+  -revoke Sub_RSA_CA_1_APV-leaf-crl.crt \
   -crl_reason keyCompromise
 
 openssl ca -config openssl-rsa-sub-ocsp.cnf \
   -gencrl -crldays 30 \
-  -out ca-work/Sub_RSA_CA_1_BPA/crl.pem
+  -out ca-work/Sub_RSA_CA_1_APV/crl.pem
 
-openssl crl -in ca-work/Sub_RSA_CA_1_BPA/crl.pem -text -noout > crl-after-revoke.txt
+openssl crl -in ca-work/Sub_RSA_CA_1_APV/crl.pem -text -noout > crl-after-revoke.txt
 ```
 
 Résultat dans `crl-after-revoke.txt` :
 
 ```text
-Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_BPA
+Issuer: C=FR, O=TP Crypto Agents, OU=PKI OpenSSL, CN=Sub_RSA_CA_1_APV
 Last Update: Jun 23 07:18:21 2026 GMT
 Next Update: Jul 23 07:18:21 2026 GMT
 Serial Number: 1000
@@ -392,20 +392,20 @@ Sources : `04-smime/README.md`, `smime-openssl.cnf`, `smime-cert.x509.txt`, `ver
 
 ### 5. Émission d’un certificat S/MIME
 
-Certificat : `04-smime/smime-user.crt`, émis par `Sub_RSA_CA_1_BPA`.
+Certificat : `04-smime/smime-user.crt`, émis par `Sub_RSA_CA_1_APV`.
 
 Extensions observées :
 
 - `Basic Constraints: CA:FALSE` ;
 - `Key Usage: Digital Signature, Key Encipherment` ;
 - `Extended Key Usage: E-mail Protection` ;
-- SAN email : `smime-user@bpa.local`.
+- SAN email : `smime-user@APV.local`.
 
 Commande de signature :
 
 ```bash
 openssl ca -batch \
-  -config Sub_RSA_CA_1_BPA/openssl-rsa-sub.cnf \
+  -config Sub_RSA_CA_1_APV/openssl-rsa-sub.cnf \
   -extfile ../04-smime/smime-openssl.cnf \
   -extensions v3_smime_signer \
   -days 365 \
@@ -425,7 +425,7 @@ openssl smime -sign -binary -nodetach \
   -in message.txt \
   -signer smime-user.crt \
   -inkey smime-user.key.pem \
-  -certfile ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt \
+  -certfile ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
 | openssl smime -encrypt -aes256 \
   -out signed-encrypted-message.pem \
   recipient-test.crt
@@ -444,7 +444,7 @@ openssl smime -decrypt \
 
 openssl smime -verify \
   -in decrypted-signed-message.pem \
-  -CAfile ../02-pki-openssl/RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt \
+  -CAfile ../02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
   -out verified-message.txt
 ```
 
@@ -456,13 +456,13 @@ Sources : `03-crl-ocsp/README.md`, `ocsp-test-cert.x509.txt`, `ocsp-good.txt`, `
 
 ### 8. Certificat contenant URL CRL et URL OCSP
 
-Certificat testé : `03-crl-ocsp/Sub_RSA_CA_1_BPA-leaf-ocsp.crt`.
+Certificat testé : `03-crl-ocsp/Sub_RSA_CA_1_APV-leaf-ocsp.crt`.
 
 Extensions observées :
 
 ```text
 CRL Distribution Points:
-  URI:http://crl.localhost:2560/Sub_RSA_CA_1_BPA.crl
+  URI:http://crl.localhost:2560/Sub_RSA_CA_1_APV.crl
 Authority Information Access:
   OCSP - URI:http://ocsp.localhost:2560
 ```
@@ -475,11 +475,11 @@ Commande :
 
 ```bash
 openssl ocsp \
-  -index ca-work/Sub_RSA_CA_1_BPA/db/index.txt \
+  -index ca-work/Sub_RSA_CA_1_APV/db/index.txt \
   -port 2560 \
-  -rsigner ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt \
-  -rkey ../02-pki-openssl/Sub_RSA_CA_1_BPA/private/Sub_RSA_CA_1_BPA.key.pem \
-  -CA ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt \
+  -rsigner ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  -rkey ../02-pki-openssl/Sub_RSA_CA_1_APV/private/Sub_RSA_CA_1_APV.key.pem \
+  -CA ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
   -nrequest 1
 ```
 
@@ -489,11 +489,11 @@ Commande :
 
 ```bash
 openssl ocsp \
-  -issuer ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt \
-  -cert Sub_RSA_CA_1_BPA-leaf-ocsp.crt \
+  -issuer ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
+  -cert Sub_RSA_CA_1_APV-leaf-ocsp.crt \
   -url http://127.0.0.1:2560 \
-  -CAfile ../02-pki-openssl/RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt \
-  -verify_other ../02-pki-openssl/Sub_RSA_CA_1_BPA/certs/Sub_RSA_CA_1_BPA.crt \
+  -CAfile ../02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
+  -verify_other ../02-pki-openssl/Sub_RSA_CA_1_APV/certs/Sub_RSA_CA_1_APV.crt \
   -resp_text -text -no_nonce
 ```
 
@@ -502,7 +502,7 @@ Résultat dans `ocsp-good.txt` :
 ```text
 Cert Status: good
 Response verify OK
-Sub_RSA_CA_1_BPA-leaf-ocsp.crt: good
+Sub_RSA_CA_1_APV-leaf-ocsp.crt: good
 ```
 
 ### 11. Révocation
@@ -511,7 +511,7 @@ Commande :
 
 ```bash
 openssl ca -batch -config openssl-rsa-sub-ocsp.cnf \
-  -revoke Sub_RSA_CA_1_BPA-leaf-ocsp.crt \
+  -revoke Sub_RSA_CA_1_APV-leaf-ocsp.crt \
   -crl_reason cessationOfOperation
 ```
 
@@ -523,7 +523,7 @@ Résultat dans `ocsp-revoked.txt` :
 Cert Status: revoked
 Revocation Time: Jun 23 07:18:22 2026 GMT
 Response verify OK
-Sub_RSA_CA_1_BPA-leaf-ocsp.crt: revoked
+Sub_RSA_CA_1_APV-leaf-ocsp.crt: revoked
 ```
 
 Le statut passe bien de `good` à `revoked`.
@@ -532,67 +532,67 @@ Le statut passe bien de `good` à `revoked`.
 
 Sources : `05-cross-cert/README.md`, `verify/verify-ec-self.txt`, `verify/verify-rsa-cross.txt`, `analysis/*.txt`.
 
-Une certification croisée dans un seul sens n’est pas symétrique. Ici, `RSA_Root_CA_BPA` signe un certificat croisé pour `EC_Root_CA_BPA`. Un validateur qui fait confiance à la racine RSA peut donc valider une chaîne EC via ce certificat croisé. L’inverse n’est pas vrai sans certificat miroir `RSA_Root_CA_BPA` signé par `EC_Root_CA_BPA`.
+Une certification croisée dans un seul sens n’est pas symétrique. Ici, `RSA_Root_CA_APV` signe un certificat croisé pour `EC_Root_CA_APV`. Un validateur qui fait confiance à la racine RSA peut donc valider une chaîne EC via ce certificat croisé. L’inverse n’est pas vrai sans certificat miroir `RSA_Root_CA_APV` signé par `EC_Root_CA_APV`.
 
 Exemple concret :
 
 ```text
-RSA_Root_CA_BPA
-  -> EC_Root_CA_BPA (certificat croisé signé par RSA_Root_CA_BPA)
-  -> Sub_EC_CA_1_BPA
-  -> Leaf_EC_1_BPA.crosspath
+RSA_Root_CA_APV
+  -> EC_Root_CA_APV (certificat croisé signé par RSA_Root_CA_APV)
+  -> Sub_EC_CA_1_APV
+  -> Leaf_EC_1_APV.crosspath
 ```
 
 Schéma conceptuel pour une certification croisée dans les deux sens :
 
 ```text
-RSA_Root_CA_BPA -> EC_Root_CA_BPA
-EC_Root_CA_BPA  -> RSA_Root_CA_BPA
+RSA_Root_CA_APV -> EC_Root_CA_APV
+EC_Root_CA_APV  -> RSA_Root_CA_APV
 ```
 
 Il faudrait donc émettre un second certificat croisé, cette fois avec la racine EC comme émetteur et la clé publique de la racine RSA comme sujet.
 
-Certificat final émis par `Sub_EC_CA_1_BPA` : `05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt`.
+Certificat final émis par `Sub_EC_CA_1_APV` : `05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt`.
 
-### Chaîne 1 : jusqu’à `EC_Root_CA_BPA` autosignée
+### Chaîne 1 : jusqu’à `EC_Root_CA_APV` autosignée
 
 Commande :
 
 ```bash
 openssl verify -show_chain \
-  -CAfile /home/baptiste/tp-crypto-agents/02-pki-openssl/EC_Root_CA_BPA/certs/EC_Root_CA_BPA.crt \
-  -untrusted /home/baptiste/tp-crypto-agents/02-pki-openssl/Sub_EC_CA_1_BPA/certs/Sub_EC_CA_1_BPA.crt \
-  /home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt
+  -CAfile /home/baptiste/tp-crypto-agents/02-pki-openssl/EC_Root_CA_APV/certs/EC_Root_CA_APV.crt \
+  -untrusted /home/baptiste/tp-crypto-agents/02-pki-openssl/Sub_EC_CA_1_APV/certs/Sub_EC_CA_1_APV.crt \
+  /home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt
 ```
 
 Résultat :
 
 ```text
-/home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt: OK
-depth=0: CN=Leaf_EC_1_BPA
-depth=1: CN=Sub_EC_CA_1_BPA
-depth=2: CN=EC_Root_CA_BPA
+/home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt: OK
+depth=0: CN=Leaf_EC_1_APV
+depth=1: CN=Sub_EC_CA_1_APV
+depth=2: CN=EC_Root_CA_APV
 ```
 
-### Chaîne 2 : via certification croisée jusqu’à `RSA_Root_CA_BPA`
+### Chaîne 2 : via certification croisée jusqu’à `RSA_Root_CA_APV`
 
 Commande :
 
 ```bash
 openssl verify -show_chain \
-  -CAfile /home/baptiste/tp-crypto-agents/02-pki-openssl/RSA_Root_CA_BPA/certs/RSA_Root_CA_BPA.crt \
+  -CAfile /home/baptiste/tp-crypto-agents/02-pki-openssl/RSA_Root_CA_APV/certs/RSA_Root_CA_APV.crt \
   -untrusted /home/baptiste/tp-crypto-agents/05-cross-cert/certs/untrusted-rsa-path.pem \
-  /home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt
+  /home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt
 ```
 
 Résultat :
 
 ```text
-/home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_BPA.crosspath.crt: OK
-depth=0: CN=Leaf_EC_1_BPA
-depth=1: CN=Sub_EC_CA_1_BPA
-depth=2: CN=EC_Root_CA_BPA
-depth=3: CN=RSA_Root_CA_BPA
+/home/baptiste/tp-crypto-agents/05-cross-cert/certs/Leaf_EC_1_APV.crosspath.crt: OK
+depth=0: CN=Leaf_EC_1_APV
+depth=1: CN=Sub_EC_CA_1_APV
+depth=2: CN=EC_Root_CA_APV
+depth=3: CN=RSA_Root_CA_APV
 ```
 
 ## 6. Magasin de certificats Windows
@@ -601,8 +601,8 @@ Question 15 de la partie 2 : non réalisée sur Windows. Une procédure a été 
 
 Certificats à exporter/importer :
 
-- racine : certificat racine de confiance, par exemple `RSA_Root_CA_BPA.crt` ou `HSM_Root_CA_TRI.crt` selon la chaîne testée ;
-- intermédiaire : certificat d’AC subordonnée, par exemple `Sub_RSA_CA_1_BPA.crt` ou l’AC ADCS subordonnée une fois émise.
+- racine : certificat racine de confiance, par exemple `RSA_Root_CA_APV.crt` ou `HSM_Root_CA_TRI.crt` selon la chaîne testée ;
+- intermédiaire : certificat d’AC subordonnée, par exemple `Sub_RSA_CA_1_APV.crt` ou l’AC ADCS subordonnée une fois émise.
 
 Magasins Windows visés :
 
@@ -755,13 +755,13 @@ Les mécanismes étudiés illustrent le fonctionnement pratique de la chaîne de
 ### `02-pki-openssl`
 
 - Configurations : `openssl-rsa-root.cnf`, `openssl-ec-root.cnf`, `openssl-rsa-sub.cnf`, `openssl-ec-sub.cnf`.
-- Certificats : `RSA_Root_CA_BPA.crt`, `Sub_RSA_CA_1_BPA.crt`, `Leaf_RSA_1_BPA.crt`, `EC_Root_CA_BPA.crt`, `Sub_EC_CA_1_BPA.crt`, `Leaf_EC_1_BPA.crt`.
+- Certificats : `RSA_Root_CA_APV.crt`, `Sub_RSA_CA_1_APV.crt`, `Leaf_RSA_1_APV.crt`, `EC_Root_CA_APV.crt`, `Sub_EC_CA_1_APV.crt`, `Leaf_EC_1_APV.crt`.
 - Bases OpenSSL : `db/index.txt`, `db/serial`, `db/crlnumber`.
 - Analyses : dossiers `analysis/`.
 
 ### `03-crl-ocsp`
 
-- Certificats : `Sub_RSA_CA_1_BPA-leaf-crl.crt`, `Sub_RSA_CA_1_BPA-leaf-ocsp.crt`.
+- Certificats : `Sub_RSA_CA_1_APV-leaf-crl.crt`, `Sub_RSA_CA_1_APV-leaf-ocsp.crt`.
 - Configuration : `openssl-rsa-sub-ocsp.cnf`.
 - Sorties : `verify-before-revoke.txt`, `crl-after-revoke.txt`, `crl-after-ocsp-revoke.txt`, `ocsp-good.txt`, `ocsp-revoked.txt`, `ocsp-test-cert.x509.txt`.
 - Script : `run-crl-ocsp.sh`.
@@ -774,8 +774,8 @@ Les mécanismes étudiés illustrent le fonctionnement pratique de la chaîne de
 
 ### `05-cross-cert`
 
-- Certificat croisé : `certs/EC_Root_CA_BPA.cross-signed-by-RSA_Root_CA_BPA.crt`.
-- Certificat final : `certs/Leaf_EC_1_BPA.crosspath.crt`.
+- Certificat croisé : `certs/EC_Root_CA_APV.cross-signed-by-RSA_Root_CA_APV.crt`.
+- Certificat final : `certs/Leaf_EC_1_APV.crosspath.crt`.
 - Chaîne non fiable : `certs/untrusted-rsa-path.pem`.
 - Vérifications : `verify/verify-ec-self.txt`, `verify/verify-rsa-cross.txt`.
 - Analyses : `analysis/*.txt`.
