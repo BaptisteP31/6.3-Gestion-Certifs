@@ -1,0 +1,20 @@
+[Version]
+Signature="$Windows NT$"
+
+[NewRequest]
+Subject = "CN=www.tp-crypto.local"
+KeyLength = 3072
+KeySpec = 1
+KeyUsage = 0xa0
+MachineKeySet = TRUE
+Exportable = FALSE
+ProviderName = Microsoft RSA SChannel Cryptographic Provider
+ProviderType = 12
+RequestType = PKCS10
+HashAlgorithm = SHA256
+
+[Extensions]
+2.5.29.17 = "{text}"
+_continue_ = "DNS=www.tp-crypto.local"
+
+[RequestAttributes]
