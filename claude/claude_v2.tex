@@ -771,32 +771,83 @@ depth=3: CN=RSA_Root_CA_APV
 
 
 \subsection{Magasin de certificats Windows (tâche 15)}
-Cette partie n'a pas été exécutée sur Windows dans l'environnement Linux. Une procédure a
-été préparée pour la VM Windows Server.
+\label{sec:winstore}
 
-\begin{placeholder}
-\textbf{Certificats à exporter/importer :}
+\subsubsection{Pourquoi un « magasin » de certificats}
+Sous Linux, on valide une chaîne en désignant explicitement le fichier de l'AC de
+confiance (\cmdinline{openssl verify -CAfile racine.crt}). Windows fonctionne autrement :
+il ne lit pas des fichiers \fichier{.crt} en vrac, il s'appuie sur des \emph{magasins de
+certificats} (\emph{certificate stores}), c'est-à-dire des bases internes du système
+rangées par \emph{usage}. Pour qu'un certificat émis par notre PKI soit reconnu comme
+valide par Windows, il faut donc \emph{importer} nos certificats dans les bons magasins.
+
+Deux magasins nous intéressent, et la distinction est essentielle :
 \begin{itemize}[leftmargin=1.4em]
-  \item racine : \fichier{RSA\_Root\_CA\_\tri.crt} ou \fichier{HSM\_Root\_CA\_\tri.crt}
-  selon la chaîne testée ;
-  \item intermédiaire : \fichier{Sub\_RSA\_CA\_1\_\tri.crt} ou l'AC ADCS subordonnée une
-  fois émise.
+  \item \textbf{Autorités de certification racines de confiance}
+  (chemin PowerShell \texttt{Cert:\textbackslash LocalMachine\textbackslash Root}) : ce
+  sont les \emph{ancres de confiance}. Toute chaîne qui remonte jusqu'à une racine placée
+  ici est jugée fiable par le système. On n'y met \emph{que} des racines auto-signées.
+  \item \textbf{Autorités de certification intermédiaires}
+  (\texttt{Cert:\textbackslash LocalMachine\textbackslash CA}) : on y place les AC
+  \emph{subordonnées}. Elles ne sont pas des ancres de confiance ; elles servent à
+  Windows pour reconstruire le chemin entre un certificat d'entité finale et la racine.
 \end{itemize}
-\textbf{Magasins Windows visés :}
+
+\begin{notebox}
+\texttt{LocalMachine} désigne le magasin de \emph{l'ordinateur} (valable pour tous les
+comptes et pour les services comme IIS) ; \texttt{CurrentUser} ne concernerait que la
+session courante. Pour une PKI de serveur, on importe toujours dans
+\texttt{LocalMachine}, ce qui exige une console PowerShell \textbf{en administrateur}.
+\end{notebox}
+
+\subsubsection{Certificats à importer}
+On illustre ici avec la chaîne de la Partie~3 (racine adossée au HSM) :
 \begin{itemize}[leftmargin=1.4em]
-  \item racine : \texttt{Autorités de certification racines de confiance} /
-  \texttt{Cert:\\LocalMachine\\Root} ;
-  \item intermédiaire : \texttt{Autorités de certification intermédiaires} /
-  \texttt{Cert:\\LocalMachine\\CA}.
+  \item racine : \fichier{rootCA.crt} (\texttt{CN=RootCA}, auto-signée, à mettre dans
+  \texttt{Root}) ;
+  \item intermédiaire : le certificat de l'AC subordonnée ADCS \fichier{sub\_ca.crt}
+  (\texttt{CN=Sub-ADCS-CA-APV}, à mettre dans \texttt{CA}).
 \end{itemize}
+La même méthode s'applique à la chaîne OpenSSL de la Partie~2
+(\fichier{RSA\_Root\_CA\_\tri.crt} en racine, \fichier{Sub\_RSA\_CA\_1\_\tri.crt} en
+intermédiaire).
+
+\subsubsection{Import dans les magasins (PowerShell administrateur)}
 \begin{lstlisting}[style=cmd]
-Import-Certificate -FilePath C:\PKI\HSM_Root_CA_APV.cer -CertStoreLocation Cert:\LocalMachine\Root
-Import-Certificate -FilePath C:\PKI\HSM_Sub_CA_APV.cer  -CertStoreLocation Cert:\LocalMachine\CA
+# Racine HSM -> magasin des racines de confiance de la machine
+Import-Certificate -FilePath C:\TP-Crypto-ADCS\input\rootCA.crt `
+  -CertStoreLocation Cert:\LocalMachine\Root
+
+# AC subordonnee ADCS -> magasin des AC intermediaires
+Import-Certificate -FilePath C:\TP-Crypto-ADCS\input\sub_ca.crt `
+  -CertStoreLocation Cert:\LocalMachine\CA
 \end{lstlisting}
-Validation attendue : ouverture du certificat dans Windows et vérification de l'onglet
-\texttt{Chemin d'accès de certification}. Captures à compléter : magasin racine, magasin
-intermédiaire et chaîne validée.
-\end{placeholder}
+
+\begin{notebox}
+L'équivalent en ligne de commande historique est \cmdinline{certutil -addstore Root
+rootCA.crt} et \cmdinline{certutil -addstore CA sub\_ca.crt}. C'est d'ailleurs ce qui a été
+utilisé en Partie~3 ; l'import effectif de la racine dans le magasin \texttt{Root} est
+visible figure~\ref{fig:adcs-rootstore}.
+\end{notebox}
+
+\subsubsection{Vérification de la chaîne}
+Deux contrôles complémentaires :
+\begin{lstlisting}[style=cmd]
+# 1) Inspection graphique : ouvrir la console des certificats machine
+certlm.msc
+# Double-cliquer le certificat, onglet "Chemin d'acces de certification".
+
+# 2) Verification en ligne de commande de la chaine
+certutil -verify C:\TP-Crypto-ADCS\input\sub_ca.crt
+\end{lstlisting}
+\begin{reponse}
+Résultat (cf. Partie~3) : dans l'onglet \emph{Chemin d'accès de certification}, la chaîne
+\texttt{RootCA} $\rightarrow$ \texttt{Sub-ADCS-CA-APV} s'affiche complète avec la mention
+« Ce certificat est valide » (figure~\ref{fig:adcs-chain}), et \texttt{certutil -verify}
+reconstruit la chaîne jusqu'à la racine sans erreur (figure~\ref{fig:adcs-verify}). Cela
+confirme que Windows fait bien confiance à notre racine importée. Le même principe vaut
+pour un certificat feuille TLS émis ensuite par l'AC subordonnée.
+\end{reponse}
 
 \newpage
 
@@ -806,87 +857,309 @@ intermédiaire et chaîne validée.
 \section{Partie 3 : SoftHSM2 et ADCS}
 
 \subsection{Autorité racine Linux avec SoftHSM2}
-Tâches réalisées : configuration locale de SoftHSM2, initialisation
-d'un token dédié, génération d'une clé RSA 4096 bits dans le token, émission d'un
-certificat racine autosigné, génération d'une CRL/ARL valable environ un mois,
-utilisation d'OpenSSL via PKCS\#11 et vérification de l'absence de fichier de clé privée
-exporté hors SoftHSM2.
+La racine de cette partie a été construite sous Linux (Kali) avec \textbf{SoftHSM2}, un
+HSM logiciel qui expose une interface \textbf{PKCS\#11}. L'intérêt : la clé privée de la
+racine est générée \emph{dans} le token et n'en sort jamais ; OpenSSL ne fait que la
+piloter à distance via PKCS\#11.
 
+\subsubsection{Initialisation du token SoftHSM2}
+On crée un token dédié, étiqueté \texttt{RootCA}, avec un code SO (administration) et un
+code utilisateur (PIN) distincts :
 \begin{lstlisting}[style=cmd]
-cd /home/aurelien/Documents/certificats/06-softhsm
-./scripts/bootstrap-hsm-root-ca.sh
+softhsm2-util --init-token --free --label RootCA --so-pin 1234 --pin 5678
+softhsm2-util --show-slots
 \end{lstlisting}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.82\linewidth]{images/win_hsm_init_token.png}
+  \caption{Initialisation du token SoftHSM2 \texttt{RootCA} : le slot libre est initialisé
+  et réassigné.}
+  \label{fig:hsm-init}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\linewidth]{images/win_hsm_slots.png}
+  \caption{\texttt{softhsm2-util --show-slots} : le token \texttt{RootCA} est présent,
+  initialisé, PIN utilisateur défini (SoftHSM v2).}
+  \label{fig:hsm-slots}
+\end{figure}
 
-\begin{lstlisting}[style=out]
-Subject: C=FR, O=TP Crypto, OU=06-softhsm, CN=HSM_Root_CA_APV
-Issuer:  C=FR, O=TP Crypto, OU=06-softhsm, CN=HSM_Root_CA_APV
-Cle: RSA 4096 bits
-Validite: Jun 23 07:17:04 2026 GMT -> Jun 20 07:17:04 2036 GMT
-Extensions: CA:TRUE, pathlen:1, Certificate Sign, CRL Sign
+\subsubsection{Clé RSA 4096 dans le token et racine auto-signée}
+La bi-clé RSA 4096 est créée dans le token, puis OpenSSL~3 auto-signe le certificat racine
+en accédant à la clé privée \emph{via le provider} \texttt{pkcs11prov} (la clé n'est jamais
+copiée sur le disque) :
+\begin{lstlisting}[style=cmd]
+openssl req -provider default -provider pkcs11prov \
+  -new -x509 -days 3650 -sha256 \
+  -subj "/C=FR/O=TP Crypto/CN=TP Root CA" \
+  -key "$ROOT_KEY_URI" \
+  -addext "basicConstraints=critical,CA:TRUE" \
+  -addext "keyUsage=critical,cRLSign,keyCertSign" \
+  -addext "subjectKeyIdentifier=hash" \
+  -addext "authorityKeyIdentifier=keyid:always" \
+  -out certs/rootCA.crt
 \end{lstlisting}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.62\linewidth]{images/win_hsm_root_req.png}
+  \caption{Création/auto-signature de la racine via PKCS\#11 : OpenSSL retrouve bien la clé
+  privée \texttt{RootCAKey} dans le token \texttt{RootCA} (module \texttt{p11-kit-proxy.so}).}
+  \label{fig:hsm-root-req}
+\end{figure}
+
+\noindent Le certificat racine obtenu est bien une RSA 4096 bits, auto-signée, avec les
+extensions d'une AC :
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/win_hsm_root_cert.png}
+  \caption{\texttt{openssl x509 -text} sur \texttt{certs/rootCA.crt} : RSA 4096 bits,
+  sujet et émetteur identiques (\texttt{O=TP Crypto, CN=TP Root CA}), validité 10 ans.}
+  \label{fig:hsm-root-cert}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\linewidth]{images/win_hsm_root_ext.png}
+  \caption{Extensions de la racine : \texttt{Basic Constraints CA:TRUE} (critique),
+  \texttt{Key Usage : Certificate Sign, CRL Sign}.}
+  \label{fig:hsm-root-ext}
+\end{figure}
+
+\begin{notebox}
+La racine a été régénérée en fin de manipulation sous le \emph{Common Name} \texttt{RootCA}
+(mêmes paramètres : \texttt{O=TP Crypto}, RSA 4096) ; c'est cette dernière, visible plus
+loin dans le magasin Windows, qui a signé l'AC subordonnée ADCS. Les captures de cette
+sous-section illustrent la racine SoftHSM2 dans sa première version (\texttt{TP Root CA}).
+\end{notebox}
 
 \subsection{CRL / ARL de la racine HSM}
-\begin{lstlisting}[style=out]
-Issuer: C=FR, O=TP Crypto, OU=06-softhsm, CN=HSM_Root_CA_APV
-Last Update: Jun 23 07:17:04 2026 GMT
-Next Update: Jul 23 07:17:04 2026 GMT
-No Revoked Certificates.
-\end{lstlisting}
+La racine publie une CRL (qui sert ici d'ARL puisqu'elle ne signe que des AC) valable
+un mois et, pour l'instant, sans certificat révoqué :
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.72\linewidth]{images/win_hsm_crl.png}
+  \caption{CRL de la racine SoftHSM2 : \texttt{Last/Next Update} espacés d'un mois,
+  \texttt{No Revoked Certificates}.}
+  \label{fig:hsm-crl}
+\end{figure}
 
 \subsection{Absence d'export de clé privée}
-\begin{lstlisting}[style=cmd]
-sh scripts/verify-no-private-files.sh
-\end{lstlisting}
-\begin{lstlisting}[style=out]
-No private key file (.key or private .pem) found outside SoftHSM2.
-\end{lstlisting}
+On vérifie qu'aucun fichier de clé privée (\fichier{.key} ou \fichier{.pem} privé) n'a été
+écrit hors du token : la recherche ne renvoie rien, ce qui confirme que la clé reste
+confinée dans SoftHSM2.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{images/win_hsm_nokey.png}
+  \caption{\texttt{find . -type f | grep -E "\textbackslash.key|\textbackslash.pem"} ne
+  retourne aucun fichier : aucune clé privée exportée hors du HSM.}
+  \label{fig:hsm-nokey}
+\end{figure}
 
 \subsection{Point technique PKCS\#11}
-La tentative avec le provider \texttt{pkcs11} a échoué car le module attendu n'existait
-pas sous ce nom. La solution utilisée est le provider OpenSSL 3 \texttt{pkcs11prov}, avec
-le module SoftHSM2 configuré.
+Le moteur (\emph{engine}) historique \texttt{pkcs11} est bien listé comme disponible par
+OpenSSL, mais l'ancienne syntaxe \cmdinline{openssl x509 -req -engine pkcs11} échoue sous
+OpenSSL~3 (« \texttt{bad engine id} », clé privée PKCS\#11 introuvable). La solution
+retenue est le \emph{provider} OpenSSL~3 \texttt{pkcs11prov}, utilisé pour toutes les
+opérations de signature ci-dessus et ci-dessous.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.78\linewidth]{images/win_pkcs11_engine_fail.png}
+  \caption{Échec de la voie \emph{engine} (\texttt{-engine pkcs11}) : « bad engine id »
+  et impossibilité de charger la clé privée PKCS\#11. La signature passera par le
+  \emph{provider} \texttt{pkcs11prov}.}
+  \label{fig:pkcs11-fail}
+\end{figure}
 
 \subsection{Autorité subordonnée ADCS Windows}
-Cette partie est à réaliser sur Windows Server 2019. Le dossier
-\fichier{07-windows-handoff/README.md} contient une procédure de préparation, mais pas de
-preuve d'exécution.
+\label{sec:adcs}
 
-\begin{placeholder}
-\textbf{Procédure attendue :}
-\begin{enumerate}[leftmargin=1.5em]
-  \item Installer ADCS en mode \emph{Standalone CA} :
+\subsubsection{Objectif et vocabulaire}
+La dernière étape consiste à faire d'un \textbf{Windows Server 2019} une AC subordonnée
+de notre racine HSM Linux. Autrement dit, la clé privée de cette sous-AC est générée et
+conservée sur Windows, mais son certificat est signé par la racine
+\texttt{HSM\_Root\_CA\_TRI} restée côté Linux/SoftHSM2. On obtient une chaîne hétérogène
+Linux~$\rightarrow$~Windows, ce qui illustre l'interopérabilité du standard X.509.
+
+\noindent Quelques termes Microsoft à connaître :
+\begin{itemize}[leftmargin=1.4em]
+  \item \textbf{ADCS} (\emph{Active Directory Certificate Services}) : le rôle Windows
+  qui fournit une autorité de certification. Le service système correspondant s'appelle
+  \texttt{CertSvc}.
+  \item \textbf{Standalone} (autonome) vs \textbf{Enterprise} : une AC \emph{Enterprise}
+  s'intègre à un annuaire Active Directory (gabarits, auto-enrôlement). Une AC
+  \emph{Standalone} est indépendante de tout domaine ; c'est ce que demande le TP, car la
+  VM n'est pas contrôleur de domaine.
+  \item \textbf{Subordinate} (subordonnée) vs \textbf{Root} : une AC \emph{Root} s'auto-signe ;
+  une AC \emph{Subordinate} génère une \emph{CSR} (PKCS\#10) qu'une autorité parente doit
+  signer. Ici l'autorité parente est notre racine SoftHSM2 Linux.
+\end{itemize}
+
+\begin{notebox}
+\textbf{Nom de l'AC.} Le nom logique du TP est « APV », mais ADCS gère mal les
+soulignés (\texttt{\_}) dans le \emph{Common Name} d'une AC (problèmes d'encodage
+ASN.1/Unicode). On a donc normalisé le nom Windows en \texttt{Sub-ADCS-CA-APV} (avec des
+tirets). C'est purement cosmétique et n'affecte pas la cryptographie.
+\end{notebox}
+
+Toute la procédure est automatisée par le script \fichier{windows-adcs/run-on-windows.ps1} les commandes ci-dessous sont celles qu'il exécute, détaillées pour le
+compte rendu. Le déroulement est en \textbf{deux passages} sur Windows, séparés par une
+signature côté Linux.
+
+\subsubsection{Premier passage Windows : rôle ADCS et génération de la CSR}
+On copie le dossier \fichier{windows-adcs} sur le Bureau de l'administrateur, puis dans une
+console \textbf{PowerShell ouverte en administrateur} :
 \begin{lstlisting}[style=cmd]
-Install-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
+cd C:\Users\Administrateur\Desktop\windows-adcs
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+.\run-on-windows.ps1            # ajouter -ResetADCS si une VM a deja servi
 \end{lstlisting}
-  \item Créer une AC subordonnée autonome avec clé RSA 4096 bits, SHA-256 et validité 5 ans :
+Ce passage exécute pour l'essentiel :
 \begin{lstlisting}[style=cmd]
+# 1) Installer le role d'autorite de certification
+Install-WindowsFeature -Name ADCS-Cert-Authority -IncludeManagementTools
+
+# 2) Creer une AC subordonnee AUTONOME : cle RSA 4096 + SHA-256,
+#    et produire la CSR a faire signer par la racine Linux.
 Install-AdcsCertificationAuthority `
   -CAType StandaloneSubordinateCA `
-  -CACommonName "HSM_Sub_CA_APV" `
+  -CACommonName "Sub-ADCS-CA-APV" `
+  -CADistinguishedNameSuffix "O=TP Crypto, C=FR" `
+  -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
   -KeyLength 4096 `
   -HashAlgorithmName SHA256 `
-  -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
-  -OutputCertRequestFile C:\PKI\HSM_Sub_CA_APV.req `
-  -ValidityPeriod Years `
-  -ValidityPeriodUnits 5
+  -OutputCertRequestFile C:\TP-Crypto-ADCS\output\sub-adcs-ca.req `
+  -IgnoreUnicode -Force
 \end{lstlisting}
-  \item Transférer la CSR PKCS\#10 vers Linux et la signer avec la racine OpenSSL/SoftHSM2 :
+\begin{notebox}
+On ne précise volontairement \emph{pas} \texttt{-ValidityPeriod} ici : pour une AC
+\emph{subordonnée}, la durée de validité est imposée par l'autorité parente au moment où
+elle signe la CSR (côté Linux, on signera pour 5~ans). C'est normal que le service
+\texttt{CertSvc} ne démarre pas encore : il manque le certificat signé.
+\end{notebox}
+\begin{reponse}
+Le rôle \emph{Autorité de certification} (\texttt{ADCS-Cert-Authority}) est bien installé
+(figure~\ref{fig:adcs-feature}) et le fichier
+\fichier{C:\textbackslash TP-Crypto-ADCS\textbackslash output\textbackslash sub-adcs-ca.req}
+(requête PKCS\#10, figure~\ref{fig:adcs-csr}) est créé. Le script invite alors à le faire
+signer côté Linux.
+\end{reponse}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{images/win_adcs_feature.png}
+  \caption{\texttt{Get-WindowsFeature ADCS*} : le rôle \emph{Autorité de certification}
+  (\texttt{ADCS-Cert-Authority}) est à l'état \texttt{Installed}.}
+  \label{fig:adcs-feature}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.55\linewidth]{images/win_adcs_csr.png}
+  \caption{La requête PKCS\#10 de l'AC subordonnée (\texttt{-----BEGIN NEW CERTIFICATE
+  REQUEST-----}) générée par ADCS, à transmettre à la racine Linux.}
+  \label{fig:adcs-csr}
+\end{figure}
+
+\subsubsection{Signature de la CSR côté Linux (racine SoftHSM2)}
+On rapatrie \fichier{sub-adcs-ca.req} sur le poste Linux, puis on la signe avec la clé de
+la racine restée dans le HSM, toujours via le provider \texttt{pkcs11prov} (la clé privée
+n'est jamais exportée) :
 \begin{lstlisting}[style=cmd]
-cd /home/aurelien/Documents/certificats/06-softhsm
-./scripts/sign-adcs-csr.sh HSM_Sub_CA_APV.req issued/HSM_Sub_CA_APV.crt
+openssl x509 -req -provider default -provider pkcs11prov \
+  -in certs/sub-adcs-ca.req \
+  -CA certs/rootCA.crt \
+  -CAkey "pkcs11:token=RootCA;object=RootCAKey;type=private;pin-value=5678" \
+  -CAcreateserial -days 1825 \
+  -extensions v3_ca -extfile openssl.cnf \
+  -out sub_ca.crt
 \end{lstlisting}
-  \item Renvoyer le certificat signé sur Windows et finaliser ADCS :
+Le profil d'extensions appliqué (\texttt{v3\_ca}) fait bien de la cible une AC subordonnée :
+\begin{lstlisting}[style=conf]
+[v3_ca]
+basicConstraints       = critical, CA:true
+keyUsage               = critical, digitalSignature, cRLSign, keyCertSign
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+\end{lstlisting}
+\begin{notebox}
+\texttt{-days 1825} fixe la validité de l'AC subordonnée à 5~ans : c'est bien la racine
+parente qui décide de la durée, comme annoncé au premier passage Windows.
+\end{notebox}
+\begin{reponse}
+Le certificat \fichier{sub\_ca.crt} obtenu est émis par \texttt{CN=RootCA} pour le sujet
+\texttt{CN=Sub-ADCS-CA-APV, O=TP Crypto, C=FR}, valable du 23/06/2026 au 22/06/2031
+(5~ans) — voir la vérification figure~\ref{fig:adcs-verify}.
+\end{reponse}
+
+\subsubsection{Second passage Windows : import de la racine et finalisation}
+On recopie côté Windows le certificat signé \fichier{sub\_ca.crt} \emph{et} le certificat
+racine \fichier{rootCA.crt}, puis on importe la racine comme ancre de confiance et on
+installe le certificat de la sous-AC :
 \begin{lstlisting}[style=cmd]
-certreq -accept C:\PKI\HSM_Sub_CA_APV.cer
+# Importer la racine Linux comme ancre de confiance (cf. tache 15)
+certutil -addstore Root  C:\TP-Crypto-ADCS\input\rootCA.crt
+# Installer le certificat signe dans l'AC subordonnee, puis demarrer le service
+certutil -installCert C:\TP-Crypto-ADCS\input\sub_ca.crt
+Start-Service CertSvc
 \end{lstlisting}
-  \item Générer une requête TLS avec \texttt{certreq}, puis la soumettre à l'AC ADCS :
+La racine SoftHSM2 est alors bien présente dans le magasin
+\emph{Autorités de certification racines de confiance} de la machine
+(figure~\ref{fig:adcs-rootstore}).
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.78\linewidth]{images/win_adcs_rootstore.png}
+  \caption{\texttt{certutil -store Root "RootCA"} : la racine SoftHSM2 (\texttt{CN=RootCA,
+  O=TP Crypto}) est installée comme ancre de confiance, « le sujet correspond à
+  l'émetteur » (racine auto-signée).}
+  \label{fig:adcs-rootstore}
+\end{figure}
+
+\subsubsection{Vérification de la chaîne hétérogène Linux $\rightarrow$ Windows}
+C'est le résultat central de la Partie~3 : le certificat de l'AC subordonnée, hébergée sous
+Windows, se valide jusqu'à la racine SoftHSM2 importée.
 \begin{lstlisting}[style=cmd]
-certreq -new C:\PKI\tls.inf C:\PKI\tls.req
-certutil -config "NomServeur\HSM_Sub_CA_APV" -submit C:\PKI\tls.req C:\PKI\tls.cer
+certutil -verify -urlfetch .\sub_ca.crt
 \end{lstlisting}
-\end{enumerate}
-Captures nécessaires : rôle ADCS installé, AC subordonnée configurée, certificat racine
-importé, certificat subordonné valide, certificat TLS émis et chaîne visible dans Windows.
-\end{placeholder}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.66\linewidth]{images/win_adcs_chain.png}
+  \caption{Onglet \emph{Chemin d'accès de certification} : la chaîne \texttt{RootCA}
+  $\rightarrow$ \texttt{Sub-ADCS-CA-APV} est complète et « Ce certificat est valide ».}
+  \label{fig:adcs-chain}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\linewidth]{images/win_adcs_verify.png}
+  \caption{\texttt{certutil -verify} sur \texttt{sub\_ca.crt} : émetteur \texttt{CN=RootCA},
+  sujet \texttt{CN=Sub-ADCS-CA-APV}, validité 23/06/2026 → 22/06/2031, chaîne complète
+  reconstruite jusqu'à la racine. La seule remarque (\texttt{CRYPT\_E\_NO\_REVOCATION\_CHECK})
+  est normale : aucune URL de CRL/OCSP en ligne pour cette racine de TP.}
+  \label{fig:adcs-verify}
+\end{figure}
+\begin{reponse}
+La chaîne \texttt{Sub-ADCS-CA-APV} $\rightarrow$ \texttt{RootCA} est validée par Windows
+(« Ce certificat est valide », figure~\ref{fig:adcs-chain}). Windows fait donc confiance à
+une AC dont l'ancre est une racine dont la \textbf{clé privée n'a jamais quitté le HSM
+SoftHSM2 sous Linux}. L'objectif d'interopérabilité Linux/Windows autour d'une racine
+adossée à un HSM est atteint. Le seul avertissement de \texttt{certutil -verify} porte sur
+l'absence de point de révocation en ligne, attendu pour une PKI de laboratoire hors ligne.
+\end{reponse}
+
+\subsubsection{Émission d'un certificat TLS par l'AC ADCS}
+Une fois l'AC subordonnée opérationnelle (\texttt{CertSvc} en \texttt{Running}), elle peut
+émettre des certificats d'entité finale. On génère une CSR TLS à partir d'un fichier
+\fichier{.inf}, puis on la soumet à l'AC :
+\begin{lstlisting}[style=cmd]
+# CSR TLS depuis le modele .inf (RSA 3072, EKU serverAuth, SAN dns=www.tp-crypto.local)
+certreq -new    C:\TP-Crypto-ADCS\output\web-tls.inf C:\TP-Crypto-ADCS\output\web-tls.req
+certreq -submit -config "$env:COMPUTERNAME\Sub-ADCS-CA-APV" `
+  C:\TP-Crypto-ADCS\output\web-tls.req C:\TP-Crypto-ADCS\output\web-tls.cer
+\end{lstlisting}
+\begin{notebox}
+Une AC \emph{Standalone} met par défaut les demandes \emph{en attente} : le script les
+valide automatiquement (\cmdinline{certutil -resubmit} puis \cmdinline{certreq -retrieve}).
+Le certificat émis porte alors l'EKU \emph{TLS Web Server Authentication} et le SAN
+\texttt{DNS:www.tp-crypto.local}, et se vérifie avec \cmdinline{certutil -verify
+web-tls.cer}. Tous les artefacts et journaux sont regroupés dans
+\fichier{C:\textbackslash TP-Crypto-ADCS\textbackslash} (rapport
+\fichier{RAPPORT-WINDOWS-ADCS.md} et dossier \fichier{logs\textbackslash}).
+\end{notebox}
 
 \end{document}
