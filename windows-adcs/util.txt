@@ -1,0 +1,49 @@
+Dans PowerShell admin, lance ça :
+
+Stop-Service CertSvc -Force -ErrorAction SilentlyContinue
+
+Import-Module ADCSDeployment -ErrorAction SilentlyContinue
+
+Uninstall-AdcsCertificationAuthority -Force
+
+Ensuite redémarre :
+
+Restart-Computer
+
+Après redémarrage, relance PowerShell admin puis fais :
+
+Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
+
+cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+.\run-on-windows.ps1
+
+Si Uninstall-AdcsCertificationAuthority -Force te dit qu’il n’y a rien à désinstaller ou qu’il échoue, fais la méthode plus bourrine mais acceptable en VM de TP :
+
+Stop-Service CertSvc -Force -ErrorAction SilentlyContinue
+
+Remove-WindowsFeature ADCS-Cert-Authority -IncludeManagementTools
+
+Restart-Computer
+
+Puis après reboot :
+
+Remove-Item C:\TP-Crypto-ADCS -Recurse -Force -ErrorAction SilentlyContinue
+
+cd C:\Users\Administrateur\Desktop\6.3-Gestion-Certifs\windows-adcs
+
+.\run-on-windows.ps1
+
+Normalement, après ça, tu dois arriver à l’étape où il génère :
+
+C:\TP-Crypto-ADCS\output\sub-adcs-ca.req
+
+Et là ce sera normal qu’il s’arrête : il faudra signer cette CSR côté Linux, puis mettre le certificat signé dans :
+
+C:\TP-Crypto-ADCS\input\sub-adcs-ca-signed.crt
+
+et la racine Linux dans :
+
+C:\TP-Crypto-ADCS\input\root-ca.crt
